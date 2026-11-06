@@ -1,0 +1,23 @@
+
+body {
+    background-color: #f8faf8;
+    font-family: Arial, sans-serif;
+}
+
+.meal-card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.meal-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title {
+    color: #263b2d;
+}
+
+.navbar-brand {
+    font-size: 24px;
+}

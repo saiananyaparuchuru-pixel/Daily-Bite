@@ -3,12 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DailyBite</title>
+
+    <title>DailyBite | Meal Planner</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
-    <h1>Welcome to DailyBite!</h1>
-    <p>Your everyday meal planning companion.</p>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">DailyBite</a>
+
+            <span class="navbar-text text-white">
+                Your Everyday Meal Companion
+            </span>
+        </div>
+    </nav>
+
+    <!-- Welcome section -->
+    <section class="container mt-5">
+        <h1 class="fw-bold">Find Your Everyday Meals 🍽️</h1>
+
+        <p class="text-muted">
+            Explore affordable and delicious meals for every day.
+        </p>
+    </section>
+    
+<!-- Meal Filters -->
+<section class="container mt-4">
+
+    <div class="card shadow-sm p-4">
+
+        <h4 class="mb-3">Find Your Perfect Meal</h4>
+
+        <form method="GET" action="/">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Food Preference
+                    </label>
+
+                    <select name="food_type" class="form-select">
+
+                        <option value="">All Food Types</option>
+
+                        <option value="Vegetarian"
+                            {% if food_type == 'Vegetarian' %}selected{% endif %}>
+                            Vegetarian
+                        </option>
+
+                        <option value="Non-Vegetarian"
+                            {% if food_type == 'Non-Vegetarian' %}selected{% endif %}>
+                            Non-Vegetarian
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Meal Category
+                    </label>
+
+                    <select name="category" class="form-select">
+
+                        <option value="">All Categories</option>
+
+                        <option value="Breakfast"
+                            {% if category == 'Breakfast' %}selected{% endif %}>
+                            Breakfast
+                        </option>
+
+                        <option value="Lunch"
+                            {% if category == 'Lunch' %}selected{% endif %}>
+                            Lunch
+                        </option>
+
+                        <option value="Dinner"
+                            {% if category == 'Dinner' %}selected{% endif %}>
+                            Dinner
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Maximum Budget (₹)
+                    </label>
+
+                    <input
+                        type="number"
+                        name="max_price"
+                        class="form-control"
+                        placeholder="Enter your budget"
+                        min="0"
+                        step="1"
+                        value="{{ max_price }}"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="mt-4">
+
+                <button type="submit" class="btn btn-success">
+                    Find Meals
+                </button>
+
+                <a href="/" class="btn btn-outline-secondary">
+                    Reset Filters
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+    <!-- Meals section -->
+    <section class="container mt-4 mb-5">
+
+        <h2 class="mb-4">Available Meals</h2>
+
+        <div class="row">
+
+            {% for meal in meals %}
+
+            <div class="col-md-4 mb-4">
+
+                <div class="card meal-card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title fw-bold">
+                            {{ meal['name'] }}
+                        </h5>
+
+                        <span class="badge bg-success">
+                            {{ meal['food_type'] }}
+                        </span>
+
+                        <span class="badge bg-secondary">
+                            {{ meal['category'] }}
+                        </span>
+
+                        <p class="card-text mt-3 text-muted">
+                            {{ meal['description'] }}
+                        </p>
+
+                        <h5 class="text-success">
+                            ₹{{ meal['price'] }}
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <p>No meals are currently available.</p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
 
 </body>
 </html>

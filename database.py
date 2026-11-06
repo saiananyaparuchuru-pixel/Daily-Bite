@@ -48,6 +48,44 @@ def insert_sample_meals():
             (name, category, food_type, price, description)
             VALUES (?, ?, ?, ?, ?)
         """, meals)
+def get_all_meals():
+
+    connection = get_db_connection()
+
+    meals = connection.execute(
+        "SELECT * FROM meals WHERE availability = 1"
+    ).fetchall()
+
+    connection.close()
+
+    return meals
+
+def get_filtered_meals(food_type=None, max_price=None, category=None):
+
+    connection = get_db_connection()
+
+    query = "SELECT * FROM meals WHERE availability = 1"
+    parameters = []
+
+    if food_type:
+        query += " AND food_type = ?"
+        parameters.append(food_type)
+
+    if max_price is not None:
+        query += " AND price <= ?"
+        parameters.append(max_price)
+
+    if category:
+        query += " AND category = ?"
+        parameters.append(category)
+
+    meals = connection.execute(
+        query, parameters
+    ).fetchall()
+
+    connection.close()
+
+    return meals
 
     connection.commit()
     connection.close()
