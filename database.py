@@ -43,6 +43,13 @@ def create_tables():
             UNIQUE(day, category)
         )
     """)
+    # Weekly budget settings table
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS budget_settings (
+            id INTEGER PRIMARY KEY,
+            weekly_limit REAL NOT NULL
+        )
+    """)
 
     connection.commit()
     connection.close()
@@ -210,6 +217,42 @@ def get_weekly_budget():
     """).fetchone()
 
     connection.close()
+
+    return result["total"]
+
+# Save or update the user's weekly budget limit
+def save_weekly_limit(amount):
+
+    connection = get_db_connection()
+
+    connection.execute("""
+        INSERT INTO budget_settings (id, weekly_limit)
+        VALUES (1, ?)
+        ON CONFLICT(id)
+        DO UPDATE SET weekly_limit = excluded.weekly_limit
+    """, (amount,))
+
+    connection.commit()
+    connection.close()
+
+
+# Retrieve the user's weekly budget limit
+def get_weekly_limit():
+
+    connection = get_db_connection()
+
+    result = connection.execute("""
+        SELECT weekly_limit
+        FROM budget_settings
+        WHERE id = 1
+    """).fetchone()
+
+    connection.close()
+
+    if result:
+        return result["weekly_limit"]
+
+    return 2000.0
 
     return result["total"]
 

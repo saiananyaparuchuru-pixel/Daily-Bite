@@ -31,22 +31,94 @@
         Plan your breakfast, lunch and dinner for the entire week.
     </p>
 
-    <!-- Weekly Budget Display -->
+   
+<!-- Weekly Budget Dashboard -->
 <div class="card shadow-sm border-success mb-4">
-    <div class="card-body text-center">
+    <div class="card-body">
 
-        <h5 class="text-muted">Your Weekly Food Budget</h5>
+        <h4 class="fw-bold text-success mb-3">
+            Weekly Budget Dashboard
+        </h4>
 
-        <h2 class="text-success fw-bold">
-            ₹{{ "%.2f"|format(weekly_budget) }}
-        </h2>
+        <form action="{{ url_for('save_budget') }}"
+              method="POST"
+              class="row g-3 align-items-end mb-4">
 
-        <p class="mb-0 text-muted">
-            Total cost of all meals currently saved in your planner.
-        </p>
+            <div class="col-md-8">
+                <label class="form-label fw-bold">
+                    Set Your Weekly Budget (₹)
+                </label>
+
+                <input type="number"
+                       name="weekly_limit"
+                       class="form-control"
+                       min="1"
+                       step="0.01"
+                       value="{{ weekly_limit }}"
+                       required>
+            </div>
+
+            <div class="col-md-4">
+                <button type="submit"
+                        class="btn btn-success w-100">
+                    Update Budget
+                </button>
+            </div>
+
+        </form>
+
+        <div class="row text-center g-3">
+
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded">
+                    <p class="text-muted mb-1">Weekly Limit</p>
+                    <h3 class="fw-bold">
+                        ₹{{ "%.2f"|format(weekly_limit) }}
+                    </h3>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded">
+                    <p class="text-muted mb-1">Planned Cost</p>
+                    <h3 class="fw-bold text-primary">
+                        ₹{{ "%.2f"|format(weekly_budget) }}
+                    </h3>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded">
+                    <p class="text-muted mb-1">
+                        {% if remaining_budget >= 0 %}
+                            Remaining Budget
+                        {% else %}
+                            Budget Exceeded
+                        {% endif %}
+                    </p>
+
+                    <h3 class="fw-bold {% if remaining_budget >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        ₹{{ "%.2f"|format(remaining_budget|abs) }}
+                    </h3>
+                </div>
+            </div>
+
+        </div>
+
+        {% if remaining_budget < 0 %}
+            <div class="alert alert-danger mt-3 mb-0">
+                Your planned meals exceed your weekly budget!
+                Consider changing some meals.
+            </div>
+        {% else %}
+            <div class="alert alert-success mt-3 mb-0">
+                Your planned meals are within your weekly budget.
+            </div>
+        {% endif %}
 
     </div>
 </div>
+
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}

@@ -8,9 +8,10 @@ from database import (
     insert_sample_meals,
     save_meal_plan,
     get_weekly_plan,
-    get_weekly_budget
+    get_weekly_budget,
+    save_weekly_limit,
+    get_weekly_limit
 )
-
 app = Flask(__name__)
 app.secret_key = "dailybite-development-key"
 
@@ -48,12 +49,17 @@ def planner():
     meals = get_all_meals()
     plans = get_weekly_plan()
     weekly_budget = get_weekly_budget()
+    weekly_limit = get_weekly_limit()
+
+    remaining_budget = weekly_limit - weekly_budget
 
     return render_template(
         "planner.html",
         meals=meals,
         plans=plans,
-        weekly_budget=weekly_budget
+        weekly_budget=weekly_budget,
+        weekly_limit=weekly_limit,
+        remaining_budget=remaining_budget
     )
 
 
@@ -90,6 +96,25 @@ def save_plan():
     save_meal_plan(day, category, meal_id)
 
     flash("Your meal plan was saved successfully!", "success")
+
+    return redirect(url_for("planner"))
+
+
+@app.route("/save-budget", methods=["POST"])
+def save_budget():
+
+    try:
+        amount = float(request.form.get("weekly_limit"))
+
+        if amount <= 0:
+            raise ValueError
+
+        save_weekly_limit(amount)
+
+        flash("Weekly budget updated successfully!", "success")
+
+    except (ValueError, TypeError):
+        flash("Please enter a valid budget amount.", "danger")
 
     return redirect(url_for("planner"))
 
