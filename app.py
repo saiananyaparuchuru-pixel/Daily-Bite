@@ -10,7 +10,8 @@ from database import (
     get_weekly_plan,
     get_weekly_budget,
     save_weekly_limit,
-    get_weekly_limit
+    get_weekly_limit,
+    get_daily_summary
 )
 app = Flask(__name__)
 app.secret_key = "dailybite-development-key"
@@ -50,6 +51,7 @@ def planner():
     plans = get_weekly_plan()
     weekly_budget = get_weekly_budget()
     weekly_limit = get_weekly_limit()
+    daily_summary = get_daily_summary()
 
     remaining_budget = weekly_limit - weekly_budget
 
@@ -59,9 +61,9 @@ def planner():
         plans=plans,
         weekly_budget=weekly_budget,
         weekly_limit=weekly_limit,
-        remaining_budget=remaining_budget
+        remaining_budget=remaining_budget,
+        daily_summary=daily_summary
     )
-
 
 @app.route("/save-plan", methods=["POST"])
 def save_plan():

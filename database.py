@@ -259,3 +259,35 @@ def get_weekly_limit():
     connection.close()
 
     return plans
+def get_daily_summary():
+
+    connection = get_db_connection()
+
+    summary = connection.execute("""
+        SELECT
+            day,
+            COUNT(*) AS meal_count,
+            SUM(meals.price) AS daily_total
+
+        FROM weekly_plans
+
+        JOIN meals
+        ON weekly_plans.meal_id = meals.id
+
+        GROUP BY day
+
+        ORDER BY
+            CASE day
+                WHEN 'Monday' THEN 1
+                WHEN 'Tuesday' THEN 2
+                WHEN 'Wednesday' THEN 3
+                WHEN 'Thursday' THEN 4
+                WHEN 'Friday' THEN 5
+                WHEN 'Saturday' THEN 6
+                WHEN 'Sunday' THEN 7
+            END
+    """).fetchall()
+
+    connection.close()
+
+    return summary

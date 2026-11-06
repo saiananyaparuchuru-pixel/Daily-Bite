@@ -216,5 +216,56 @@
 
 </div>
 
+<!-- Daily Meal Summary -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <h4 class="fw-bold text-success mb-3">
+            Daily Meal Summary
+        </h4>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center">
+
+                <thead class="table-success">
+                    <tr>
+                        <th>Day</th>
+                        <th>Meals Planned</th>
+                        <th>Daily Expense</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% set days = [
+                        'Monday', 'Tuesday', 'Wednesday',
+                        'Thursday', 'Friday', 'Saturday', 'Sunday'
+                    ] %}
+
+                    {% for day in days %}
+
+                        {% set ns = namespace(count=0, total=0) %}
+
+                        {% for item in daily_summary %}
+                            {% if item['day'] == day %}
+                                {% set ns.count = item['meal_count'] %}
+                                {% set ns.total = item['daily_total'] %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <tr>
+                            <td class="fw-bold">{{ day }}</td>
+                            <td>{{ ns.count }}</td>
+                            <td>₹{{ "%.2f"|format(ns.total) }}</td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
 </body>
 </html>
