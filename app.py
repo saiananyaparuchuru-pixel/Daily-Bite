@@ -11,7 +11,9 @@ from database import (
     get_weekly_budget,
     save_weekly_limit,
     get_weekly_limit,
-    get_daily_summary
+    get_daily_summary,
+    save_user_preferences,
+    get_user_preferences
 )
 app = Flask(__name__)
 app.secret_key = "dailybite-development-key"
@@ -64,6 +66,55 @@ def planner():
         remaining_budget=remaining_budget,
         daily_summary=daily_summary
     )
+    
+@app.route("/preferences")
+def preferences():
+
+    user_preferences = get_user_preferences()
+
+    return render_template(
+        "preferences.html",
+        preferences=user_preferences
+    )
+    
+    
+@app.route("/save-preferences", methods=["POST"])
+def save_preferences():
+
+    food_type = request.form.get("food_type")
+    max_price = request.form.get("max_price")
+
+    breakfast = 1 if request.form.get("breakfast") else 0
+    lunch = 1 if request.form.get("lunch") else 0
+    dinner = 1 if request.form.get("dinner") else 0
+
+    try:
+        max_price = float(max_price)
+
+        if max_price <= 0:
+            raise ValueError
+
+        if food_type not in ["Vegetarian", "Non-Vegetarian", "Both"]:
+            raise ValueError
+
+        if not any([breakfast, lunch, dinner]):
+            flash("Please select at least one meal category.", "danger")
+            return redirect(url_for("preferences"))
+
+        save_user_preferences(
+            food_type,
+            max_price,
+            breakfast,
+            lunch,
+            dinner
+        )
+
+        flash("Your meal preferences were saved successfully!", "success")
+
+    except (ValueError, TypeError):
+        flash("Please enter valid preference details.", "danger")
+
+    return redirect(url_for("preferences"))
 
 @app.route("/save-plan", methods=["POST"])
 def save_plan():

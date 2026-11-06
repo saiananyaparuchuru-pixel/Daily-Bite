@@ -43,6 +43,7 @@ def create_tables():
             UNIQUE(day, category)
         )
     """)
+
     # Weekly budget settings table
     connection.execute("""
         CREATE TABLE IF NOT EXISTS budget_settings (
@@ -51,9 +52,20 @@ def create_tables():
         )
     """)
 
+    # User meal preferences table
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS user_preferences (
+            id INTEGER PRIMARY KEY,
+            food_type TEXT DEFAULT 'Both',
+            max_price REAL DEFAULT 200,
+            breakfast INTEGER DEFAULT 1,
+            lunch INTEGER DEFAULT 1,
+            dinner INTEGER DEFAULT 1
+        )
+    """)
+
     connection.commit()
     connection.close()
-
 
 # 3. Insert sample meals
 def insert_sample_meals():
@@ -235,7 +247,6 @@ def save_weekly_limit(amount):
     connection.commit()
     connection.close()
 
-
 # Retrieve the user's weekly budget limit
 def get_weekly_limit():
 
@@ -289,5 +300,65 @@ def get_daily_summary():
     """).fetchall()
 
     connection.close()
+    
 
     return summary
+
+# Save or update user meal preferences
+def save_user_preferences(
+    food_type,
+    max_price,
+    breakfast,
+    lunch,
+    dinner
+):
+
+    connection = get_db_connection()
+
+    connection.execute("""
+        INSERT INTO user_preferences
+        (id, food_type, max_price, breakfast, lunch, dinner)
+        VALUES (1, ?, ?, ?, ?, ?)
+
+        ON CONFLICT(id)
+        DO UPDATE SET
+            food_type = excluded.food_type,
+            max_price = excluded.max_price,
+            breakfast = excluded.breakfast,
+            lunch = excluded.lunch,
+            dinner = excluded.dinner
+    """, (
+        food_type,
+        max_price,
+        breakfast,
+        lunch,
+        dinner
+    ))
+
+    connection.commit()
+    connection.close()
+
+
+# Retrieve user meal preferences
+def get_user_preferences():
+
+    connection = get_db_connection()
+
+    preferences = connection.execute("""
+        SELECT *
+        FROM user_preferences
+        WHERE id = 1
+    """).fetchone()
+
+    connection.close()
+
+    if preferences:
+        return preferences
+
+    return {
+        "food_type": "Both",
+        "max_price": 200,
+        "breakfast": 1,
+        "lunch": 1,
+        "dinner": 1
+    }
