@@ -198,3 +198,21 @@ def get_weekly_plan():
     connection.close()
 
     return plans
+def get_weekly_budget():
+
+    connection = get_db_connection()
+
+    result = connection.execute("""
+        SELECT COALESCE(SUM(meals.price), 0) AS total
+        FROM weekly_plans
+        JOIN meals
+        ON weekly_plans.meal_id = meals.id
+    """).fetchone()
+
+    connection.close()
+
+    return result["total"]
+
+    connection.close()
+
+    return plans

@@ -1,13 +1,18 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, flash
+
 from database import (
     get_all_meals,
     get_filtered_meals,
     create_tables,
-    insert_sample_meals
+    insert_sample_meals,
+    save_meal_plan,
+    get_weekly_plan,
+    get_weekly_budget
 )
 
 app = Flask(__name__)
+app.secret_key = "dailybite-development-key"
 
 
 @app.route("/")
@@ -35,6 +40,58 @@ def home():
         category=category,
         max_price=max_price_input
     )
+
+
+@app.route("/planner")
+def planner():
+
+    meals = get_all_meals()
+    plans = get_weekly_plan()
+    weekly_budget = get_weekly_budget()
+
+    return render_template(
+        "planner.html",
+        meals=meals,
+        plans=plans,
+        weekly_budget=weekly_budget
+    )
+
+
+@app.route("/save-plan", methods=["POST"])
+def save_plan():
+
+    day = request.form.get("day")
+    category = request.form.get("category")
+    meal_id = request.form.get("meal_id")
+
+    valid_days = [
+        "Monday", "Tuesday", "Wednesday",
+        "Thursday", "Friday", "Saturday", "Sunday"
+    ]
+
+    valid_categories = ["Breakfast", "Lunch", "Dinner"]
+
+    try:
+        meal_id = int(meal_id)
+    except (ValueError, TypeError):
+        flash("Please select a valid meal.", "danger")
+        return redirect(url_for("planner"))
+
+    if day not in valid_days or category not in valid_categories:
+        flash("Invalid day or meal category.", "danger")
+        return redirect(url_for("planner"))
+
+    meals = get_all_meals()
+
+    if not any(meal["id"] == meal_id for meal in meals):
+        flash("Selected meal is unavailable.", "danger")
+        return redirect(url_for("planner"))
+
+    save_meal_plan(day, category, meal_id)
+
+    flash("Your meal plan was saved successfully!", "success")
+
+    return redirect(url_for("planner"))
 
 
 if __name__ == "__main__":
