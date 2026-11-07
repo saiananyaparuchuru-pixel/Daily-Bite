@@ -124,12 +124,13 @@ def get_all_meals():
 
 
 # 5. Filter meals based on user preferences
+
 def get_filtered_meals(
     food_type=None,
     max_price=None,
-    category=None
+    category=None,
+    allowed_categories=None
 ):
-
     connection = get_db_connection()
 
     query = """
@@ -139,7 +140,7 @@ def get_filtered_meals(
 
     parameters = []
 
-    if food_type:
+    if food_type and food_type != "Both":
         query += " AND food_type = ?"
         parameters.append(food_type)
 
@@ -151,6 +152,18 @@ def get_filtered_meals(
         query += " AND category = ?"
         parameters.append(category)
 
+    if allowed_categories is not None:
+        if not allowed_categories:
+            connection.close()
+            return []
+
+        placeholders = ",".join(
+            ["?"] * len(allowed_categories)
+        )
+
+        query += f" AND category IN ({placeholders})"
+        parameters.extend(allowed_categories)
+
     meals = connection.execute(
         query, parameters
     ).fetchall()
@@ -158,6 +171,7 @@ def get_filtered_meals(
     connection.close()
 
     return meals
+
 
 
 # 6. Save a meal in the weekly planner
