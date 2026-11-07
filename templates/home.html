@@ -23,7 +23,6 @@
 
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-
         <div class="container">
 
             <a class="navbar-brand fw-bold" href="/">
@@ -40,39 +39,29 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarMenu">
-
                 <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">
-                            Home
-                        </a>
+                        <a class="nav-link active" href="/">Home</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/planner">
-                            Weekly Planner
-                        </a>
+                        <a class="nav-link" href="/planner">Weekly Planner</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/preferences">
-                            My Preferences
-                        </a>
+                        <a class="nav-link" href="/preferences">My Preferences</a>
                     </li>
 
                 </ul>
-
             </div>
 
         </div>
-
     </nav>
 
 
     <!-- Hero Section -->
     <section class="bg-light py-5">
-
         <div class="container text-center">
 
             <h1 class="fw-bold">
@@ -89,7 +78,6 @@
             </a>
 
         </div>
-
     </section>
 
 
@@ -106,17 +94,13 @@
 
                 <div class="row g-3">
 
-                    <!-- Food Preference -->
                     <div class="col-md-4">
 
                         <label class="form-label">
                             Food Preference
                         </label>
 
-                        <select
-                            name="food_type"
-                            class="form-select"
-                        >
+                        <select name="food_type" class="form-select">
 
                             <option value=""
                                 {% if not food_type %}selected{% endif %}>
@@ -138,17 +122,13 @@
                     </div>
 
 
-                    <!-- Meal Category -->
                     <div class="col-md-4">
 
                         <label class="form-label">
                             Meal Category
                         </label>
 
-                        <select
-                            name="category"
-                            class="form-select"
-                        >
+                        <select name="category" class="form-select">
 
                             <option value=""
                                 {% if not category %}selected{% endif %}>
@@ -175,7 +155,6 @@
                     </div>
 
 
-                    <!-- Maximum Budget -->
                     <div class="col-md-4">
 
                         <label class="form-label">
@@ -197,26 +176,92 @@
                 </div>
 
 
-                <!-- Filter Buttons -->
                 <div class="mt-4">
 
-                    <button
-                        type="submit"
-                        class="btn btn-success"
-                    >
+                    <button type="submit" class="btn btn-success">
                         Find Meals
                     </button>
 
-                    <a
-                        href="/?browse_all=true"
-                        class="btn btn-outline-secondary"
-                    >
+                    <a href="/?browse_all=true"
+                       class="btn btn-outline-secondary">
                         Browse All Meals
                     </a>
 
                 </div>
 
             </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- Gnani AI Voice Assistant -->
+    <section class="container mt-4">
+
+        <div class="card shadow-sm border-0 p-4 text-center">
+
+            <h4 class="fw-bold">
+                <span aria-hidden="true">🎙️</span>
+                Meet Your DailyBite Voice Assistant
+            </h4>
+
+            <p class="text-muted mt-2">
+                Tell DailyBite what you want to eat.
+                Just speak naturally!
+            </p>
+
+            <div class="mb-3">
+
+                <button
+                    type="button"
+                    id="recordButton"
+                    class="btn btn-success btn-lg"
+                >
+                    🎤 Start Speaking
+                </button>
+
+            </div>
+
+            <p id="voiceStatus"
+               class="text-muted mb-2"
+               role="status"
+               aria-live="polite">
+                Click the microphone and speak your meal preference.
+            </p>
+
+            <div id="voiceResult"
+                 class="alert alert-light text-start d-none">
+
+                <strong>You said:</strong>
+                <p id="transcriptText" class="mb-0 mt-1"></p>
+
+            </div>
+
+            <div id="voiceError"
+                 class="alert alert-danger d-none"
+                 role="alert">
+            </div>
+
+            <div class="mt-2">
+
+                <p class="small text-muted mb-1">
+                    Try saying:
+                </p>
+
+                <span class="badge bg-light text-dark">
+                    Show vegetarian meals under 100 rupees
+                </span>
+
+                <span class="badge bg-light text-dark">
+                    Show me non-vegetarian lunch
+                </span>
+
+                <span class="badge bg-light text-dark">
+                    Find breakfast under 50 rupees
+                </span>
+
+            </div>
 
         </div>
 
@@ -230,13 +275,11 @@
             Available Meals
         </h2>
 
-        <!-- Recommendation Message -->
         <p class="text-muted mb-4">
             {{ recommendation_message }}
         </p>
 
-
-        <div class="row">
+        <div class="row" id="mealResults">
 
             {% for meal in meals %}
 
@@ -278,9 +321,7 @@
 
                 <div class="alert alert-warning text-center">
 
-                    <h5>
-                        No meals found!
-                    </h5>
+                    <h5>No meals found!</h5>
 
                     <p class="mb-0">
                         Try changing your filters or browse all available meals.
@@ -308,9 +349,282 @@
 
 
     <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    ></script>
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <!-- Voice Recording and Gnani API Integration -->
+    <script>
+
+        const recordButton = document.getElementById("recordButton");
+        const voiceStatus = document.getElementById("voiceStatus");
+        const voiceResult = document.getElementById("voiceResult");
+        const transcriptText = document.getElementById("transcriptText");
+        const voiceError = document.getElementById("voiceError");
+        const mealResults = document.getElementById("mealResults");
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        recordButton.addEventListener("click", async function () {
+
+            if (!isRecording) {
+                await startRecording();
+            } else {
+                stopRecording();
+            }
+
+        });
+
+
+        async function startRecording() {
+
+            try {
+
+                voiceError.classList.add("d-none");
+                voiceResult.classList.add("d-none");
+
+                if (!navigator.mediaDevices ||
+                    !navigator.mediaDevices.getUserMedia) {
+
+                    throw new Error(
+                        "Your browser does not support microphone recording. Please use a modern browser."
+                    );
+
+                }
+
+                const stream =
+                    await navigator.mediaDevices.getUserMedia({
+                        audio: true
+                    });
+
+                audioChunks = [];
+
+                const options = {};
+
+                if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+                    options.mimeType = "audio/webm;codecs=opus";
+                }
+
+                mediaRecorder = new MediaRecorder(stream, options);
+
+                mediaRecorder.ondataavailable = function (event) {
+
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+
+                };
+
+                mediaRecorder.onstop = async function () {
+
+                    const audioBlob = new Blob(
+                        audioChunks,
+                        { type: mediaRecorder.mimeType || "audio/webm" }
+                    );
+
+                    stream.getTracks().forEach(track => track.stop());
+
+                    await sendAudioToServer(audioBlob);
+
+                };
+
+                mediaRecorder.start();
+
+                isRecording = true;
+
+                recordButton.textContent = "⏹ Stop Recording";
+                recordButton.classList.remove("btn-success");
+                recordButton.classList.add("btn-danger");
+
+                voiceStatus.textContent =
+                    "Listening... Speak your meal preference now.";
+
+            } catch (error) {
+
+                showVoiceError(error.message);
+
+            }
+
+        }
+
+
+        function stopRecording() {
+
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+
+                mediaRecorder.stop();
+
+                isRecording = false;
+
+                recordButton.textContent = "🎤 Start Speaking";
+                recordButton.classList.remove("btn-danger");
+                recordButton.classList.add("btn-success");
+
+                voiceStatus.textContent =
+                    "Processing your voice with Gnani AI...";
+
+            }
+
+        }
+
+
+        async function sendAudioToServer(audioBlob) {
+
+            try {
+
+                const formData = new FormData();
+
+                formData.append("audio", audioBlob, "voice-command.webm");
+
+                const response = await fetch("/voice-command", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+
+                    throw new Error(
+                        data.message || "Voice processing failed."
+                    );
+
+                }
+
+                transcriptText.textContent = data.transcript;
+
+                voiceResult.classList.remove("d-none");
+
+                voiceStatus.textContent = data.message;
+
+                displayVoiceMeals(data.meals);
+                // Play Gnani Timbre voice response
+if (data.audio) {
+    try {
+        const audioBytes = new Uint8Array(
+            data.audio.match(/.{1,2}/g).map(
+                byte => parseInt(byte, 16)
+            )
+        );
+
+        const audioBlob = new Blob(
+            [audioBytes],
+            { type: "audio/mpeg" }
+        );
+
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const voiceAudio = new Audio(audioUrl);
+
+        voiceAudio.onended = () => {
+            URL.revokeObjectURL(audioUrl);
+        };
+
+        await voiceAudio.play();
+
+    } catch (error) {
+        console.error("Voice playback failed:", error);
+        voiceStatus.textContent =
+            "Meals found, but voice playback failed.";
+    }
+} else {
+    console.error("No audio received from Flask.");
+}
+
+            } catch (error) {
+
+                showVoiceError(error.message);
+
+            }
+
+        }
+
+
+        function displayVoiceMeals(meals) {
+
+            mealResults.innerHTML = "";
+
+            if (!meals || meals.length === 0) {
+
+                mealResults.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-warning text-center">
+                            No matching meals found. Try another command.
+                        </div>
+                    </div>
+                `;
+
+                return;
+
+            }
+
+            meals.forEach(meal => {
+
+                const mealCard = document.createElement("div");
+
+                mealCard.className = "col-md-4 mb-4";
+
+                const card = document.createElement("div");
+                card.className = "card meal-card h-100 shadow-sm";
+
+                const body = document.createElement("div");
+                body.className = "card-body";
+
+                const title = document.createElement("h5");
+                title.className = "card-title fw-bold";
+                title.textContent = meal.name;
+
+                const foodBadge = document.createElement("span");
+                foodBadge.className = "badge bg-success me-1";
+                foodBadge.textContent = meal.food_type;
+
+                const categoryBadge = document.createElement("span");
+                categoryBadge.className = "badge bg-secondary";
+                categoryBadge.textContent = meal.category;
+
+                const description = document.createElement("p");
+                description.className = "card-text mt-3 text-muted";
+                description.textContent = meal.description || "";
+
+                const price = document.createElement("h5");
+                price.className = "text-success fw-bold";
+                price.textContent = "₹" + meal.price;
+
+                body.append(
+                    title,
+                    foodBadge,
+                    categoryBadge,
+                    description,
+                    price
+                );
+
+                card.appendChild(body);
+                mealCard.appendChild(card);
+
+                mealResults.appendChild(mealCard);
+
+            });
+
+        }
+
+
+        function showVoiceError(message) {
+
+            voiceError.textContent = message;
+            voiceError.classList.remove("d-none");
+
+            voiceStatus.textContent = "Something went wrong.";
+
+            recordButton.textContent = "🎤 Start Speaking";
+            recordButton.classList.remove("btn-danger");
+            recordButton.classList.add("btn-success");
+
+            isRecording = false;
+
+        }
+
+    </script>
 
 </body>
-
 </html>
