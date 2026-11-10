@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,53 +5,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>DailyBite | Smart Meal Planner</title>
+    <title>DailyBite | Smart Meal Planner & 3D Culinary Studio</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <!-- Google Fonts & Bootstrap Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/style.css') }}"
-    >
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Modern Stylesheet (UI/UX Pro Max Edition) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <!-- Modern Glassmorphism Navigation Bar -->
+    <nav class="navbar navbar-expand-lg dailybite-navbar">
         <div class="container">
 
-            <a class="navbar-brand fw-bold" href="/">
-                DailyBite
+            <a class="brand-wrapper" href="/">
+                <div class="brand-icon-box">
+                    <i class="bi bi-egg-fried"></i>
+                </div>
+                <h1 class="brand-text">Daily<span>Bite</span></h1>
             </a>
 
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu"
-            >
-                <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                <i class="bi bi-list fs-2 text-dark"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarMenu">
-                <ul class="navbar-nav ms-auto">
-
+                <ul class="navbar-nav ms-auto align-items-center gap-1 mt-3 mt-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
+                        <a class="nav-link nav-pill-link active" href="/">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/planner">Weekly Planner</a>
+                        <a class="nav-link nav-pill-link" href="#orbitCarouselSection">
+                            <i class="bi bi-compass"></i> 3D Orbit
+                        </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/preferences">My Preferences</a>
+                        <a class="nav-link nav-pill-link" href="/planner">
+                            <i class="bi bi-calendar-week"></i> Flexible Planner
+                        </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/orders">
+                            <i class="bi bi-bag-check-fill text-success"></i> My Orders
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/preferences">
+                            <i class="bi bi-sliders"></i> Preferences
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <button type="button" class="btn btn-primary-gradient py-2 px-3 shadow-sm text-white d-flex align-items-center gap-2" onclick="DailyBiteCart.openCart()">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span>Cart</span>
+                            <span class="badge bg-white text-dark rounded-pill cart-count-badge">0</span>
+                        </button>
+                    </li>
                 </ul>
             </div>
 
@@ -60,255 +84,537 @@
     </nav>
 
 
-    <!-- Hero Section -->
-    <section class="bg-light py-5">
+    <!-- Hero Section with Floating Graphics & Animations -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center g-5">
+
+                <!-- Hero Content Left -->
+                <div class="col-lg-6">
+                    <div class="hero-tag">
+                        <i class="bi bi-stars"></i> Next-Gen 3D & AI Food Planning
+                    </div>
+
+                    <h1 class="hero-title">
+                        Eat Smarter, Spend Better,
+                        <span class="highlight-text">Every Single Bite.</span>
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        Explore dishes in interactive <strong>3D 360° Vision</strong>, rotate our <strong>Dish Orbit Carousel</strong>, speak naturally with <strong>Gnani AI</strong>, and budget your week effortlessly.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a href="#orbitCarouselSection" class="btn-primary-gradient">
+                            <i class="bi bi-box-seam-fill"></i> Explore 3D Orbit
+                        </a>
+
+                        <a href="#voiceAssistantSection" class="btn-outline-custom">
+                            <i class="bi bi-mic-fill text-success"></i> AI Voice Search
+                        </a>
+                    </div>
+
+                    <!-- Live Stat Badges -->
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <h4>360° 3D</h4>
+                            <p>Interactive Vision</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>₹100%</h4>
+                            <p>Budget Control</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>14+</h4>
+                            <p>Curated Dishes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Graphic Right (Floating Food Graphic Showcase) -->
+                <div class="col-lg-6">
+                    <div class="hero-graphic-showcase">
+                        <!-- Background Rotating Plate Graphic -->
+                        <div class="graphic-plate-card">
+                            <img src="https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=700&q=80"
+                                 alt="Signature Dish"
+                                 class="plate-inner-image"
+                                 onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80'">
+
+                            <!-- Floating Interactive Badge 1 -->
+                            <div class="floating-badge floating-badge-1">
+                                <div class="badge-icon green">
+                                    <i class="bi bi-box"></i>
+                                </div>
+                                <div>
+                                    <div class="small text-muted fw-bold">3D VISION</div>
+                                    <div>Paneer Biryani • ₹100</div>
+                                </div>
+                            </div>
+
+                            <!-- Floating Interactive Badge 2 -->
+                            <div class="floating-badge floating-badge-2">
+                                <div class="badge-icon amber">
+                                    <i class="bi bi-mic-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="small text-muted fw-bold">VOICE AI</div>
+                                    <div>"Show lunch under ₹100"</div>
+                                </div>
+                            </div>
+
+                            <!-- Floating Interactive Badge 3 -->
+                            <div class="floating-badge floating-badge-3">
+                                <div class="badge-icon green">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div>
+                                    <div class="small text-muted fw-bold">TASTE & HEALTH</div>
+                                    <div>100% Fresh Daily</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         Dish Orbit Carousel Component (kedhareswer/dish-orbit-carousel)
+         ========================================================================== -->
+    <section class="dish-orbit-section" id="orbitCarouselSection">
         <div class="container text-center">
 
-            <h1 class="fw-bold">
-                Welcome to DailyBite!
-            </h1>
-
-            <p class="lead text-muted mt-3">
-                Plan your meals, manage your budget,
-                and discover food that matches your preferences.
+            <div class="hero-tag mb-2">
+                <i class="bi bi-compass-fill"></i> Orbital Food Experience
+            </div>
+            <h2 class="fw-bold mb-2">Dish Orbit Carousel</h2>
+            <p class="text-muted mx-auto mb-4" style="max-width: 600px;">
+                Rotate through our rotating orbital menu. Tap the center plate to enter full <strong>3D 360° Vision</strong> with interactive drag rotation!
             </p>
 
-            <a href="/planner" class="btn btn-success mt-2">
-                Plan My Meals
-            </a>
+            <div class="orbit-carousel-wrapper">
+
+                <!-- 3D Elliptical Orbit Track -->
+                <div class="orbit-ellipse-ring"></div>
+
+                <!-- Satellite Dishes orbiting in 3D -->
+                <div class="orbit-satellites-container" id="orbitSatellitesContainer">
+                    <!-- Injected dynamically by script.js -->
+                </div>
+
+                <!-- Left / Right Orbital Navigation Controls -->
+                <button type="button" class="orbit-nav-btn orbit-nav-prev" id="orbitBtnPrev" title="Rotate Previous">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button type="button" class="orbit-nav-btn orbit-nav-next" id="orbitBtnNext" title="Rotate Next">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+                <!-- Central Spotlight Stage & Hero Plate -->
+                <div class="orbit-spotlight-stage">
+
+                    <!-- Main Dish Plate (Tapping opens 3D Studio) -->
+                    <div class="orbit-hero-plate" id="orbitHeroPlate" title="Tap to Inspect in 3D 360°!">
+                        <!-- Steam Animation -->
+                        <div class="plate-steam-wave">
+                            <div class="steam-puff"></div>
+                            <div class="steam-puff"></div>
+                            <div class="steam-puff"></div>
+                        </div>
+
+                        <img src="https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=700&q=80"
+                             id="orbitHeroImg"
+                             alt="Active Dish"
+                             onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80'">
+
+                        <div class="plate-3d-pill">
+                            <i class="bi bi-badge-3d-fill fs-6"></i> Tap for 3D 360°
+                        </div>
+                    </div>
+
+                    <!-- Spotlight Dish Information Card -->
+                    <div class="orbit-info-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div id="orbitDishDiet" class="diet-stamp veg">
+                                    <span class="diet-dot"></span>
+                                </div>
+                                <span class="badge bg-secondary-subtle text-dark" id="orbitDishCategory">Lunch</span>
+                            </div>
+                            <div class="orbit-dish-price" id="orbitDishPrice">₹100</div>
+                        </div>
+
+                        <h3 class="orbit-dish-name" id="orbitDishName">Paneer Biryani</h3>
+                        <p class="text-muted small mb-3" id="orbitDishDesc">
+                            Aromatic basmati rice cooked with marinated cottage cheese, saffron and whole spices.
+                        </p>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            <button type="button" class="btn btn-primary-gradient px-3" id="orbitHeroBtn3D">
+                                <i class="bi bi-box-fill me-1"></i> 3D 360° Studio
+                            </button>
+
+                            <button type="button" class="btn btn-card-action btn-add-cart px-3" id="orbitHeroCartBtn" title="Add to Food Cart">
+                                <i class="bi bi-cart-plus-fill me-1"></i> Add to Cart
+                            </button>
+
+                            <button type="button" class="btn btn-card-action instant-btn px-3" id="orbitHeroInstantBtn" title="Instant Order (25-35 mins)">
+                                <i class="bi bi-lightning-charge-fill me-1"></i> Instant Now
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-outline-custom btn-quick-plan px-3"
+                                    id="orbitHeroPlanBtn"
+                                    data-id="2"
+                                    data-name="Paneer Biryani"
+                                    data-category="Lunch"
+                                    data-price="100">
+                                <i class="bi bi-calendar-plus text-success"></i> Plan
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
     </section>
 
 
-    <!-- Meal Filters -->
-    <section class="container mt-4">
+    <!-- Find Your Perfect Meal: Interactive Filter Card -->
+    <section class="container mt-4" style="position: relative; z-index: 30;">
+        <div class="filter-card">
 
-        <div class="card shadow-sm p-4">
-
-            <h4 class="mb-3">
-                Find Your Perfect Meal
-            </h4>
-
-            <form method="GET" action="/">
-
-                <div class="row g-3">
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Food Preference
-                        </label>
-
-                        <select name="food_type" class="form-select">
-
-                            <option value=""
-                                {% if not food_type %}selected{% endif %}>
-                                All Food Types
-                            </option>
-
-                            <option value="Vegetarian"
-                                {% if food_type == 'Vegetarian' %}selected{% endif %}>
-                                Vegetarian
-                            </option>
-
-                            <option value="Non-Vegetarian"
-                                {% if food_type == 'Non-Vegetarian' %}selected{% endif %}>
-                                Non-Vegetarian
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Meal Category
-                        </label>
-
-                        <select name="category" class="form-select">
-
-                            <option value=""
-                                {% if not category %}selected{% endif %}>
-                                All Categories
-                            </option>
-
-                            <option value="Breakfast"
-                                {% if category == 'Breakfast' %}selected{% endif %}>
-                                Breakfast
-                            </option>
-
-                            <option value="Lunch"
-                                {% if category == 'Lunch' %}selected{% endif %}>
-                                Lunch
-                            </option>
-
-                            <option value="Dinner"
-                                {% if category == 'Dinner' %}selected{% endif %}>
-                                Dinner
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Maximum Budget (₹)
-                        </label>
-
-                        <input
-                            type="number"
-                            name="max_price"
-                            class="form-control"
-                            placeholder="Enter your budget"
-                            min="1"
-                            step="1"
-                            value="{{ max_price }}"
-                        >
-
-                    </div>
-
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div class="filter-header-title mb-2 mb-md-0">
+                    <i class="bi bi-funnel-fill text-success fs-4"></i>
+                    <span>Find Your Perfect Meal</span>
                 </div>
 
+                <!-- Instant Quick Search Input -->
+                <div class="input-group" style="max-width: 320px;">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text"
+                           id="quickSearchInput"
+                           class="form-control bg-light border-start-0 ps-0"
+                           placeholder="Search dishes, ingredients...">
+                </div>
+            </div>
 
-                <div class="mt-4">
+            <!-- Unified Filter Form -->
+            <form method="GET" action="/" id="filterForm">
+                <input type="hidden" name="category" id="categoryInput" value="{{ category }}">
+                <input type="hidden" name="food_type" id="foodTypeInput" value="{{ food_type }}">
+                <input type="hidden" name="max_price" id="maxPriceInput" value="{{ max_price }}">
 
-                    <button type="submit" class="btn btn-success">
-                        Find Meals
+                <!-- Category Pills (Breakfast, Lunch, Dinner) -->
+                <div class="category-pills-row">
+                    <button type="button"
+                            class="category-pill {% if not category %}active{% endif %}"
+                            data-category="">
+                        <i class="bi bi-grid-fill"></i> All Meals
                     </button>
 
-                    <a href="/?browse_all=true"
-                       class="btn btn-outline-secondary">
-                        Browse All Meals
-                    </a>
+                    <button type="button"
+                            class="category-pill {% if category == 'Breakfast' %}active{% endif %}"
+                            data-category="Breakfast">
+                        🥞 Breakfast
+                    </button>
+
+                    <button type="button"
+                            class="category-pill {% if category == 'Lunch' %}active{% endif %}"
+                            data-category="Lunch">
+                        🍱 Lunch
+                    </button>
+
+                    <button type="button"
+                            class="category-pill {% if category == 'Dinner' %}active{% endif %}"
+                            data-category="Dinner">
+                        🍛 Dinner
+                    </button>
+                </div>
+
+                <div class="row g-4 align-items-end">
+
+                    <!-- Dietary Preference Toggle -->
+                    <div class="col-lg-5">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">
+                            Dietary Preference
+                        </label>
+                        <div class="diet-toggle-group w-100 d-flex justify-content-between">
+                            <button type="button"
+                                    class="diet-toggle-btn flex-fill justify-content-center {% if not food_type %}active{% endif %}"
+                                    data-diet="">
+                                ✨ All
+                            </button>
+                            <button type="button"
+                                    class="diet-toggle-btn flex-fill justify-content-center {% if food_type == 'Vegetarian' %}active{% endif %}"
+                                    data-diet="Vegetarian">
+                                🌱 Pure Veg
+                            </button>
+                            <button type="button"
+                                    class="diet-toggle-btn flex-fill justify-content-center {% if food_type == 'Non-Vegetarian' %}active{% endif %}"
+                                    data-diet="Non-Vegetarian">
+                                🍗 Non-Veg
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Budget Range Slider with Real-time Tooltip -->
+                    <div class="col-lg-5">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label fw-bold text-secondary small text-uppercase mb-0">
+                                Max Budget Per Meal
+                            </label>
+                            <span class="badge bg-success-subtle text-success fs-6 fw-bold px-2 py-1 rounded" id="budgetValueDisplay">
+                                {% if max_price %}₹{{ max_price }}{% else %}₹150{% endif %}
+                            </span>
+                        </div>
+
+                        <div class="budget-slider-wrapper">
+                            <input type="range"
+                                   id="budgetSlider"
+                                   class="range-input"
+                                   min="30"
+                                   max="200"
+                                   step="5"
+                                   value="{% if max_price %}{{ max_price }}{% else %}150{% endif %}">
+
+                            <div class="quick-budget-chips">
+                                <span class="budget-chip" data-value="40">Under ₹40</span>
+                                <span class="budget-chip" data-value="80">Under ₹80</span>
+                                <span class="budget-chip" data-value="100">Under ₹100</span>
+                                <span class="budget-chip" data-value="150">Under ₹150</span>
+                                <span class="budget-chip" data-value="200">Max ₹200</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="col-lg-2">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary-gradient w-100 justify-content-center">
+                                <i class="bi bi-funnel"></i> Apply
+                            </button>
+                            <a href="/?browse_all=true" class="btn btn-outline-secondary px-3" title="Reset all filters">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </a>
+                        </div>
+                    </div>
 
                 </div>
 
             </form>
 
         </div>
-
     </section>
 
 
-    <!-- Gnani AI Voice Assistant -->
-    <section class="container mt-4">
+    <!-- Gnani AI Voice Assistant Hub (Interactive Audio Concierge) -->
+    <section class="container mt-5" id="voiceAssistantSection">
+        <div class="voice-assistant-card">
+            <div class="row align-items-center g-4">
 
-        <div class="card shadow-sm border-0 p-4 text-center">
+                <!-- Voice Info Left -->
+                <div class="col-lg-7">
+                    <div class="voice-badge mb-3">
+                        <i class="bi bi-broadcast"></i> Gnani AI Voice Assistant
+                    </div>
 
-            <h4 class="fw-bold">
-                <span aria-hidden="true">🎙️</span>
-                Meet Your DailyBite Voice Assistant
-            </h4>
+                    <h3 class="fw-bold text-white mb-2">
+                        Hungry? Tell DailyBite what you'd like to eat!
+                    </h3>
 
-            <p class="text-muted mt-2">
-                Tell DailyBite what you want to eat.
-                Just speak naturally!
-            </p>
+                    <p class="text-white-50 mb-3" style="max-width: 520px;">
+                        Speak naturally in Indian English. Our AI detects your meal category, dietary preference, and budget instantly.
+                    </p>
 
-            <div class="mb-3">
+                    <!-- Quick Try Suggestions -->
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <span class="small text-white-50 me-1">Try saying:</span>
+                        <span class="quick-speech-chip" onclick="simulateVoiceQuery('Show vegetarian meals under 100 rupees')">
+                            🌱 "Veg meals under ₹100"
+                        </span>
+                        <span class="quick-speech-chip" onclick="simulateVoiceQuery('Show me non-vegetarian lunch')">
+                            🍗 "Non-veg lunch"
+                        </span>
+                        <span class="quick-speech-chip" onclick="simulateVoiceQuery('Find breakfast under 50 rupees')">
+                            🥞 "Breakfast under ₹50"
+                        </span>
+                    </div>
 
-                <button
-                    type="button"
-                    id="recordButton"
-                    class="btn btn-success btn-lg"
-                >
-                    🎤 Start Speaking
-                </button>
+                    <!-- Voice Transcript Bubble (slides in when active) -->
+                    <div id="voiceResult" class="voice-transcript-bubble d-none">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="small text-success-emphasis fw-bold text-uppercase" style="color: #6ee7b7 !important;">
+                                <i class="bi bi-chat-quote-fill me-1"></i> Recognized Speech
+                            </span>
+                        </div>
+                        <p id="transcriptText" class="mb-0 text-white fw-semibold fs-6"></p>
+                    </div>
+
+                    <div id="voiceError" class="alert alert-danger mt-3 d-none" role="alert"></div>
+                </div>
+
+                <!-- Voice Controls & Animation Right -->
+                <div class="col-lg-5 text-center">
+                    <div class="voice-mic-container">
+                        <div class="mic-ring mic-ring-1"></div>
+                        <div class="mic-ring mic-ring-2"></div>
+
+                        <button type="button" id="recordButton" class="mic-circle-btn" title="Click to speak">
+                            <i class="bi bi-mic-fill" id="micIcon"></i>
+                        </button>
+                    </div>
+
+                    <!-- Animated Sound Waveform Bars -->
+                    <div class="sound-wave-bars" id="soundWaveBars">
+                        <div class="sound-bar"></div>
+                        <div class="sound-bar"></div>
+                        <div class="sound-bar"></div>
+                        <div class="sound-bar"></div>
+                        <div class="sound-bar"></div>
+                        <div class="sound-bar"></div>
+                        <div class="sound-bar"></div>
+                    </div>
+
+                    <p id="voiceStatus" class="text-white-50 small mt-2 mb-0" role="status">
+                        Tap the microphone & speak your request (auto-listens & replies with voice).
+                    </p>
+                </div>
 
             </div>
+        </div>
+    </section>
 
-            <p id="voiceStatus"
-               class="text-muted mb-2"
-               role="status"
-               aria-live="polite">
-                Click the microphone and speak your meal preference.
-            </p>
 
-            <div id="voiceResult"
-                 class="alert alert-light text-start d-none">
-
-                <strong>You said:</strong>
-                <p id="transcriptText" class="mb-0 mt-1"></p>
-
-            </div>
-
-            <div id="voiceError"
-                 class="alert alert-danger d-none"
-                 role="alert">
-            </div>
-
-            <div class="mt-2">
-
-                <p class="small text-muted mb-1">
-                    Try saying:
+    <!-- Available Meals Grid -->
+    <section class="container mt-5 mb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">
+                    <i class="bi bi-stars text-warning me-2"></i>Handpicked Meals
+                </h2>
+                <p class="text-muted mb-0">
+                    {{ recommendation_message }}
                 </p>
-
-                <span class="badge bg-light text-dark">
-                    Show vegetarian meals under 100 rupees
-                </span>
-
-                <span class="badge bg-light text-dark">
-                    Show me non-vegetarian lunch
-                </span>
-
-                <span class="badge bg-light text-dark">
-                    Find breakfast under 50 rupees
-                </span>
-
             </div>
 
+            <div class="text-muted small fw-semibold mt-2 mt-md-0">
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                    <i class="bi bi-box-fill text-success me-1"></i> Tap "3D 360°" on any dish to inspect
+                </span>
+            </div>
         </div>
 
-    </section>
-
-
-    <!-- Available Meals -->
-    <section class="container mt-5 mb-5">
-
-        <h2 class="mb-2">
-            Available Meals
-        </h2>
-
-        <p class="text-muted mb-4">
-            {{ recommendation_message }}
-        </p>
-
-        <div class="row" id="mealResults">
+        <!-- Meals Cards Grid -->
+        <div class="row g-4" id="mealResults">
 
             {% for meal in meals %}
 
-            <div class="col-md-4 mb-4">
+            <div class="col-md-6 col-lg-4 meal-card-col fade-in-up"
+                 data-name="{{ meal['name']|lower }}"
+                 data-category="{{ meal['category']|lower }}"
+                 data-foodtype="{{ meal['food_type']|lower }}"
+                 data-desc="{{ meal['description']|lower }}">
 
-                <div class="card meal-card h-100 shadow-sm">
+                <div class="meal-card-modern">
 
-                    <div class="card-body">
+                    <!-- Image Showcase with Badges -->
+                    <div class="card-image-box">
+                        <img src="{{ meal['image_url'] if meal['image_url'] else 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80' }}"
+                             alt="{{ meal['name'] }}"
+                             class="card-food-img"
+                             loading="lazy"
+                             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80'">
 
-                        <h5 class="card-title fw-bold">
-                            {{ meal['name'] }}
-                        </h5>
+                        <!-- Veg / Non-Veg Indicator Stamp -->
+                        <div class="diet-stamp {% if meal['food_type'] == 'Vegetarian' %}veg{% else %}nonveg{% endif %}"
+                             title="{{ meal['food_type'] }}">
+                            <span class="diet-dot"></span>
+                        </div>
 
-                        <span class="badge bg-success">
-                            {{ meal['food_type'] }}
-                        </span>
-
-                        <span class="badge bg-secondary">
+                        <!-- Category Badge -->
+                        <span class="category-badge-floating">
+                            {% if meal['category'] == 'Breakfast' %}🥞
+                            {% elif meal['category'] == 'Lunch' %}🍱
+                            {% else %}🍛{% endif %}
                             {{ meal['category'] }}
                         </span>
 
-                        <p class="card-text mt-3 text-muted">
+                        <!-- Floating Price Pill -->
+                        <span class="price-pill-floating">
+                            ₹{{ "%.0f"|format(meal['price']) }}
+                        </span>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="meal-card-body">
+                        <div class="meal-meta-row">
+                            <span class="meta-rating">
+                                <i class="bi bi-star-fill"></i> 4.8
+                            </span>
+                            <span>
+                                <i class="bi bi-clock"></i> 15-20 min
+                            </span>
+                            <span>
+                                <i class="bi bi-fire"></i> Freshly Cooked
+                            </span>
+                        </div>
+
+                        <h3 class="meal-title">{{ meal['name'] }}</h3>
+
+                        <p class="meal-desc">
                             {{ meal['description'] }}
                         </p>
 
-                        <h5 class="text-success fw-bold">
-                            ₹{{ meal['price'] }}
-                        </h5>
+                        <!-- Card Action Buttons with 3D 360°, Cart & Instant Delivery -->
+                        <div class="meal-card-footer">
+                            <button type="button"
+                                    class="btn-3d-card-badge btn-open-3d"
+                                    data-id="{{ meal['id'] }}"
+                                    data-name="{{ meal['name'] }}"
+                                    data-price="{{ '%.0f'|format(meal['price']) }}"
+                                    data-category="{{ meal['category'] }}"
+                                    data-foodtype="{{ meal['food_type'] }}"
+                                    data-desc="{{ meal['description'] }}"
+                                    data-img="{{ meal['image_url'] }}"
+                                    title="Open interactive 360-degree 3D Vision">
+                                <i class="bi bi-box-fill"></i> 3D 360°
+                            </button>
 
+                            <button type="button"
+                                    class="btn-card-action btn-add-cart"
+                                    onclick="DailyBiteCart.addItem({id: '{{ meal['id'] }}', name: '{{ meal['name']|replace('\'', '\\\'') }}', price: {{ meal['price'] }}, category: '{{ meal['category'] }}', food_type: '{{ meal['food_type'] }}', image_url: '{{ meal['image_url'] }}'})"
+                                    title="Add to Food Cart">
+                                <i class="bi bi-cart-plus-fill"></i> Cart
+                            </button>
+
+                            <button type="button"
+                                    class="btn-card-action instant-btn"
+                                    onclick="DailyBiteCart.addItem({id: '{{ meal['id'] }}', name: '{{ meal['name']|replace('\'', '\\\'') }}', price: {{ meal['price'] }}, category: '{{ meal['category'] }}', food_type: '{{ meal['food_type'] }}', image_url: '{{ meal['image_url'] }}'}, {openCart: true, mode: 'instant'})"
+                                    title="Order Instantly (25-35 mins delivery)">
+                                <i class="bi bi-lightning-charge-fill"></i> Now
+                            </button>
+
+                            <button type="button"
+                                    class="btn-card-action secondary btn-quick-plan"
+                                    data-id="{{ meal['id'] }}"
+                                    data-name="{{ meal['name'] }}"
+                                    data-category="{{ meal['category'] }}"
+                                    data-price="{{ '%.0f'|format(meal['price']) }}"
+                                    title="Add to Weekly Calendar">
+                                <i class="bi bi-calendar-plus"></i> Plan
+                            </button>
+                        </div>
                     </div>
 
                 </div>
@@ -317,92 +623,556 @@
 
             {% else %}
 
+            <!-- Empty Search State -->
             <div class="col-12">
-
-                <div class="alert alert-warning text-center">
-
-                    <h5>No meals found!</h5>
-
-                    <p class="mb-0">
-                        Try changing your filters or browse all available meals.
+                <div class="text-center py-5 bg-white rounded-4 border p-4 shadow-sm">
+                    <div class="fs-1 text-muted mb-3">🍲</div>
+                    <h4 class="fw-bold">No meals match your criteria</h4>
+                    <p class="text-muted mb-4">
+                        Try loosening your budget, changing categories, or browse our complete gourmet collection.
                     </p>
-
+                    <a href="/?browse_all=true" class="btn btn-primary-gradient px-4">
+                        <i class="bi bi-arrow-repeat"></i> Browse All Meals
+                    </a>
                 </div>
-
             </div>
 
             {% endfor %}
 
         </div>
 
+        <!-- Hidden state for instant client-side search empty notification -->
+        <div id="emptySearchMessage" class="text-center py-5 bg-white rounded-4 border p-4 shadow-sm d-none">
+            <div class="fs-1 text-muted mb-3">🔍</div>
+            <h4 class="fw-bold">No matching dishes found</h4>
+            <p class="text-muted">Try searching with a different dish name or clear the search box.</p>
+        </div>
+
     </section>
 
 
+    <!-- ==========================================================================
+         3D 360° Food Studio Modal (WebGL Three.js Photorealistic 3D Vision)
+         ========================================================================== -->
+    <div class="modal fade studio-3d-modal" id="food3DStudioModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0">
+
+                <!-- 3D Studio Header -->
+                <div class="studio-3d-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="badge-icon green fs-5">
+                            <i class="bi bi-box-fill"></i>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <h4 class="fw-bold mb-0 text-white" id="studioDishTitle">Paneer Biryani</h4>
+                                <div id="studioDietBadge" class="diet-stamp veg">
+                                    <span class="diet-dot"></span>
+                                </div>
+                                <span class="badge bg-secondary" id="studioDishCategory">Lunch</span>
+                            </div>
+                            <span class="text-success fw-bold fs-5" id="studioDishPrice">₹100</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Top Studio Controls Bar (Lighting, Heat, Portion) -->
+                <div class="studio-top-controls">
+                    <!-- Lighting Mode Pills -->
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-white-50 small fw-bold text-uppercase" style="font-size: 0.72rem;">Lighting:</span>
+                        <div class="studio-pill-group">
+                            <button type="button" class="studio-pill-btn lighting-mode-btn active" data-mode="daylight">
+                                ☀️ Studio Day
+                            </button>
+                            <button type="button" class="studio-pill-btn lighting-mode-btn" data-mode="bistro">
+                                🕯️ Warm Bistro
+                            </button>
+                            <button type="button" class="studio-pill-btn lighting-mode-btn" data-mode="cyber">
+                                🌙 Cyber Glow
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Heat / Steam Intensity -->
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-white-50 small fw-bold text-uppercase" style="font-size: 0.72rem;">Steam:</span>
+                        <div class="studio-pill-group">
+                            <button type="button" class="studio-pill-btn heat-mode-btn active" data-heat="hot">
+                                🔥 Sizzling
+                            </button>
+                            <button type="button" class="studio-pill-btn heat-mode-btn" data-heat="warm">
+                                ♨️ Warm
+                            </button>
+                            <button type="button" class="studio-pill-btn heat-mode-btn" data-heat="cold">
+                                ❄️ Off
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Portion Morpher -->
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-white-50 small fw-bold text-uppercase" style="font-size: 0.72rem;">Portion:</span>
+                        <div class="portion-size-selector">
+                            <button type="button" class="portion-btn active" data-scale="1.0">1x Regular</button>
+                            <button type="button" class="portion-btn" data-scale="1.25">1.25x Large</button>
+                            <button type="button" class="portion-btn" data-scale="1.5">1.5x Feast</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D Viewport Stage -->
+                <div class="studio-canvas-stage" id="studioCanvasStage">
+
+                    <!-- 3D Telemetry HUD -->
+                    <div class="studio-hud-telemetry" id="studioTelemetryHud">
+                        360° Studio | Yaw: 0° | Pitch: 25° | Zoom: 1.0x
+                    </div>
+
+                    <!-- 3D Layer Deconstruct / Explode Panel -->
+                    <div class="studio-explode-panel">
+                        <label>
+                            <span><i class="bi bi-layers-half text-warning me-1"></i>Explode Layers</span>
+                            <span id="studioExplodeDisplay" class="text-success fw-bold">0%</span>
+                        </label>
+                        <input type="range" id="studioExplodeSlider" min="0" max="100" value="0">
+                        <div class="d-flex justify-content-between text-white-50 mt-1" style="font-size: 0.68rem;">
+                            <span id="layerNameBase">Base</span> • <span id="layerNameMid">Topping</span> • <span id="layerNameTop">Garnish</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive 3D Ingredient Hotspots (Dynamic Screen Tracking) -->
+                    <div id="studioHotspotsContainer"></div>
+
+                    <!-- Floating 3D Studio Toolbar -->
+                    <div class="studio-toolbar-floating">
+                        <button type="button" class="studio-tool-btn active" id="studioBtnAutoRotate">
+                            <i class="bi bi-arrow-repeat"></i> Auto-Spin 360°
+                        </button>
+                        <button type="button" class="studio-tool-btn" id="studioBtnResetAngle">
+                            <i class="bi bi-compass"></i> Reset Angle
+                        </button>
+                        <button type="button" class="studio-tool-btn" id="studioBtnZoomIn">
+                            <i class="bi bi-zoom-in"></i> Zoom +
+                        </button>
+                        <button type="button" class="studio-tool-btn" id="studioBtnZoomOut">
+                            <i class="bi bi-zoom-out"></i> Zoom -
+                        </button>
+                        <button type="button" class="studio-tool-btn active" id="studioBtnToggleHotspots">
+                            <i class="bi bi-geo-alt-fill"></i> Hotspots
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- 3D Studio Bottom Drawer: Nutritional Breakdown & Action -->
+                <div class="p-4 bg-dark bg-opacity-75 border-top border-secondary border-opacity-25">
+                    <div class="row align-items-center g-3">
+                        <div class="col-lg-8">
+                            <p class="text-white-50 small mb-2" id="studioDishDesc">
+                                Authentic slow-cooked dum biryani layered with aromatic whole spices, saffron milk, and garnishes.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroCalories">
+                                    <i class="bi bi-fire text-danger me-1"></i> ~380 kcal
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroProtein">
+                                    <i class="bi bi-egg text-warning me-1"></i> 16g Protein
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroCarbs">
+                                    <i class="bi bi-pie-chart text-info me-1"></i> 52g Carbs
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroFat">
+                                    <i class="bi bi-droplet-half text-primary me-1"></i> 14g Fat
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill">
+                                    <i class="bi bi-hand-index-thumb text-success me-1"></i> Drag to Rotate 360°
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5 text-lg-end d-flex gap-2 justify-content-lg-end flex-wrap">
+                            <button type="button"
+                                    class="btn btn-card-action btn-add-cart px-3 py-2"
+                                    id="studioAddToCartBtn">
+                                <i class="bi bi-cart-plus-fill me-1"></i> Add to Cart
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-card-action instant-btn px-3 py-2"
+                                    id="studioOrderInstantBtn">
+                                <i class="bi bi-lightning-charge-fill me-1"></i> Order Now
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-primary-gradient px-3 py-2 btn-quick-plan"
+                                    id="studioAddPlanBtn">
+                                <i class="bi bi-calendar-plus-fill me-1"></i> Add to Plan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Quick Add to Weekly Plan Modal -->
+    <div class="modal fade" id="quickPlanModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-calendar-plus me-2"></i>Add to Weekly Plan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form action="{{ url_for('save_plan') }}" method="POST">
+                    <div class="modal-body p-4">
+                        <input type="hidden" name="meal_id" id="quickPlanMealId">
+
+                        <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 mb-4">
+                            <div class="badge-icon green fs-4">
+                                <i class="bi bi-check2-circle"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0" id="quickPlanMealName">Dish Name</h5>
+                                <span class="text-muted small" id="quickPlanMealMeta">Category • ₹0</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Day of the Week</label>
+                            <select name="day" class="form-select meal-select-custom" required>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Meal Slot</label>
+                            <select name="category" id="quickPlanCategorySelect" class="form-select meal-select-custom" required>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light border-0 px-4 py-3">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary-gradient px-4">
+                            <i class="bi bi-bookmark-check-fill me-1"></i> Confirm & Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Dish Details Modal -->
+    <div class="modal fade" id="mealDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <img src="" id="modalMealImg" class="w-100 h-100 object-fit-cover" style="min-height: 280px;" alt="Meal">
+                    </div>
+                    <div class="col-md-7 p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div id="modalMealDietBadge" class="diet-stamp veg">
+                                        <span class="diet-dot"></span>
+                                    </div>
+                                    <span class="badge bg-secondary-subtle text-dark" id="modalMealCategory">Lunch</span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <h3 class="fw-bold mb-1" id="modalMealTitle">Dish Title</h3>
+                            <h4 class="text-success fw-bold mb-3" id="modalMealPrice">₹0</h4>
+
+                            <p class="text-muted" id="modalMealDesc">Detailed meal description...</p>
+
+                            <!-- Nutritional & Preparation Highlights -->
+                            <div class="row text-center g-2 my-3">
+                                <div class="col-4">
+                                    <div class="p-2 bg-light rounded-3">
+                                        <div class="small text-muted">Prep Time</div>
+                                        <div class="fw-bold">15-20 min</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 bg-light rounded-3">
+                                        <div class="small text-muted">Spice Level</div>
+                                        <div class="fw-bold text-danger">Medium 🌶️</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 bg-light rounded-3">
+                                        <div class="small text-muted">Calories</div>
+                                        <div class="fw-bold text-success">~350 kcal</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-top d-flex gap-2">
+                            <button type="button" class="btn btn-outline-success btn-sm px-3" id="modalBtnOpen3D">
+                                <i class="bi bi-box-fill me-1"></i> 3D 360° Studio
+                            </button>
+
+                            <form action="{{ url_for('save_plan') }}" method="POST" class="d-flex flex-fill gap-2">
+                                <input type="hidden" name="meal_id" id="modalPlanMealId">
+                                <select name="day" class="form-select form-select-sm" style="max-width: 140px;">
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                    <option value="Sunday">Sunday</option>
+                                </select>
+                                <select name="category" class="form-select form-select-sm" style="max-width: 120px;">
+                                    <option value="Breakfast">Breakfast</option>
+                                    <option value="Lunch">Lunch</option>
+                                    <option value="Dinner">Dinner</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary-gradient btn-sm px-3 flex-fill">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
+    <footer class="dailybite-footer">
+        <div class="container">
+            <div class="row g-4 justify-content-between">
+                <div class="col-md-5">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="brand-icon-box" style="width: 36px; height: 36px; font-size: 1.1rem;">
+                            <i class="bi bi-egg-fried"></i>
+                        </div>
+                        <h4 class="text-white mb-0 fw-bold">Daily<span style="color: #10b981;">Bite</span></h4>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        Next-generation smart meal planning and budgeting assistant.
+                        Designed to make daily food choices healthy, affordable, and delightfully simple with interactive 3D vision.
+                    </p>
+                    <div class="d-flex gap-3 fs-5">
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
 
-        <p class="mb-0">
-            © 2026 DailyBite. Smart Meal Planning Made Simple.
-        </p>
+                <div class="col-md-3">
+                    <h6 class="text-white fw-bold mb-3">Quick Navigation</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                        <li><a href="/">Explore Meals</a></li>
+                        <li><a href="#orbitCarouselSection">Dish Orbit 3D</a></li>
+                        <li><a href="/planner">Weekly Meal Planner</a></li>
+                        <li><a href="/preferences">Diet &amp; Budget Preferences</a></li>
+                    </ul>
+                </div>
 
+                <div class="col-md-4">
+                    <h6 class="text-white fw-bold mb-3">AI &amp; 3D Graphics</h6>
+                    <p class="text-muted small">
+                        Powered by <strong>Three.js WebGL</strong> 360° Vision, <strong>Gnani Prisma STT</strong> &amp; <strong>Gnani Timbre TTS</strong>
+                        for natural Indian-English voice interaction and smart SQLite persistence.
+                    </p>
+                    <div class="badge bg-dark border border-secondary text-white-50 px-3 py-2 rounded-pill">
+                        <i class="bi bi-cpu-fill text-success me-1"></i> 3D Vision &amp; AI Active
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-top border-secondary border-opacity-25 mt-4 pt-3 text-center text-muted small">
+                © 2026 DailyBite. Smart Meal Planning Made Beautiful.
+            </div>
+        </div>
     </footer>
 
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    <!-- Serialized Database Dishes for Orbit Carousel & 3D Studio -->
+    <script>
+        window.DISHES_DATA = [
+            {% for meal in meals %}
+            {
+                id: {{ meal['id'] }},
+                name: {{ meal['name']|tojson }},
+                category: {{ meal['category']|tojson }},
+                food_type: {{ meal['food_type']|tojson }},
+                price: {{ meal['price'] }},
+                description: {{ meal['description']|tojson }},
+                image_url: {{ (meal['image_url'] if meal['image_url'] else 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80')|tojson }}
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
     </script>
 
+    <!-- Three.js & OrbitControls for 360-degree 3D Vision -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-    <!-- Voice Recording and Gnani API Integration -->
+    <!-- Bootstrap & Custom Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Voice Recording & Gnani AI Voice Pipeline -->
     <script>
-
         const recordButton = document.getElementById("recordButton");
+        const micIcon = document.getElementById("micIcon");
         const voiceStatus = document.getElementById("voiceStatus");
         const voiceResult = document.getElementById("voiceResult");
         const transcriptText = document.getElementById("transcriptText");
         const voiceError = document.getElementById("voiceError");
         const mealResults = document.getElementById("mealResults");
+        const soundWaveBars = document.getElementById("soundWaveBars");
 
-        let mediaRecorder;
+        let recognition = null;
+        let mediaRecorder = null;
         let audioChunks = [];
         let isRecording = false;
+        let autoStopTimer = null;
+        let currentVoiceAudio = null;
 
-        recordButton.addEventListener("click", async function () {
+        // Check Web Speech API support (Chrome, Edge, Safari, Android)
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-            if (!isRecording) {
-                await startRecording();
+        recordButton.addEventListener("click", function () {
+            if (isRecording) {
+                stopListening();
             } else {
-                stopRecording();
+                startListening();
             }
-
         });
 
+        function startListening() {
+            // Stop any playing voice audio
+            if (currentVoiceAudio) {
+                currentVoiceAudio.pause();
+                currentVoiceAudio = null;
+            }
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
 
-        async function startRecording() {
+            voiceError.classList.add("d-none");
+            voiceResult.classList.add("d-none");
 
+            if (SpeechRecognition) {
+                startWebSpeech();
+            } else {
+                startMediaRecorder();
+            }
+        }
+
+        function startWebSpeech() {
             try {
-
-                voiceError.classList.add("d-none");
-                voiceResult.classList.add("d-none");
-
-                if (!navigator.mediaDevices ||
-                    !navigator.mediaDevices.getUserMedia) {
-
-                    throw new Error(
-                        "Your browser does not support microphone recording. Please use a modern browser."
-                    );
-
+                if (recognition) {
+                    try { recognition.abort(); } catch (e) {}
                 }
 
-                const stream =
-                    await navigator.mediaDevices.getUserMedia({
-                        audio: true
-                    });
+                recognition = new SpeechRecognition();
+                recognition.lang = "en-IN";
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 1;
 
+                let finalTranscript = "";
+
+                recognition.onstart = function () {
+                    isRecording = true;
+                    recordButton.classList.add("recording");
+                    micIcon.className = "bi bi-stop-fill";
+                    soundWaveBars.classList.add("recording");
+                    voiceStatus.innerHTML = '<span class="text-success fw-bold">🎙️ Listening...</span> Speak now (e.g. "veg lunch under 100")';
+
+                    // Safety timeout after 7 seconds
+                    clearTimeout(autoStopTimer);
+                    autoStopTimer = setTimeout(() => {
+                        if (isRecording) stopListening();
+                    }, 7000);
+                };
+
+                recognition.onresult = function (event) {
+                    let interim = "";
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interim += event.results[i][0].transcript;
+                        }
+                    }
+
+                    const liveText = finalTranscript || interim;
+                    if (liveText) {
+                        transcriptText.textContent = `"${liveText}"`;
+                        voiceResult.classList.remove("d-none");
+                    }
+                };
+
+                recognition.onerror = function (event) {
+                    clearTimeout(autoStopTimer);
+                    console.warn("Speech recognition error:", event.error);
+                    if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                        showVoiceError("Microphone access is blocked in your browser. Click the lock/settings icon next to the URL address bar and choose 'Allow' for Microphone.");
+                    } else if (event.error === "no-speech") {
+                        showVoiceError("No speech detected. Please tap the microphone and speak your request.");
+                    } else {
+                        // Fallback to MediaRecorder
+                        startMediaRecorder();
+                        return;
+                    }
+                    resetMicUI();
+                };
+
+                recognition.onend = function () {
+                    clearTimeout(autoStopTimer);
+                    resetMicUI();
+                    if (finalTranscript.trim()) {
+                        submitVoiceTranscript(finalTranscript.trim());
+                    }
+                };
+
+                recognition.start();
+
+            } catch (err) {
+                console.warn("WebSpeech start failed, trying MediaRecorder:", err);
+                startMediaRecorder();
+            }
+        }
+
+        async function startMediaRecorder() {
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error("Your browser does not support microphone access. Please use Chrome or Edge.");
+                }
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 audioChunks = [];
 
                 const options = {};
-
                 if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
                     options.mimeType = "audio/webm;codecs=opus";
                 }
@@ -410,72 +1180,82 @@
                 mediaRecorder = new MediaRecorder(stream, options);
 
                 mediaRecorder.ondataavailable = function (event) {
-
-                    if (event.data.size > 0) {
-                        audioChunks.push(event.data);
-                    }
-
+                    if (event.data.size > 0) audioChunks.push(event.data);
                 };
 
                 mediaRecorder.onstop = async function () {
-
-                    const audioBlob = new Blob(
-                        audioChunks,
-                        { type: mediaRecorder.mimeType || "audio/webm" }
-                    );
-
                     stream.getTracks().forEach(track => track.stop());
-
+                    const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || "audio/webm" });
                     await sendAudioToServer(audioBlob);
-
                 };
 
                 mediaRecorder.start();
-
                 isRecording = true;
 
-                recordButton.textContent = "⏹ Stop Recording";
-                recordButton.classList.remove("btn-success");
-                recordButton.classList.add("btn-danger");
+                recordButton.classList.add("recording");
+                micIcon.className = "bi bi-stop-fill";
+                soundWaveBars.classList.add("recording");
+                voiceStatus.innerHTML = '<span class="text-success fw-bold">🎙️ Listening...</span> Speak your meal request now.';
 
-                voiceStatus.textContent =
-                    "Listening... Speak your meal preference now.";
+                // Auto stop after 6 seconds
+                clearTimeout(autoStopTimer);
+                autoStopTimer = setTimeout(() => {
+                    if (isRecording) stopListening();
+                }, 6000);
 
             } catch (error) {
-
-                showVoiceError(error.message);
-
+                if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+                    showVoiceError("Microphone access is blocked in your browser. Click the lock/settings icon next to the URL address bar and choose 'Allow' for Microphone.");
+                } else {
+                    showVoiceError(error.message || "Could not access microphone.");
+                }
+                resetMicUI();
             }
-
         }
 
-
-        function stopRecording() {
-
+        function stopListening() {
+            clearTimeout(autoStopTimer);
+            if (recognition) {
+                try { recognition.stop(); } catch (e) {}
+            }
             if (mediaRecorder && mediaRecorder.state === "recording") {
-
                 mediaRecorder.stop();
-
-                isRecording = false;
-
-                recordButton.textContent = "🎤 Start Speaking";
-                recordButton.classList.remove("btn-danger");
-                recordButton.classList.add("btn-success");
-
-                voiceStatus.textContent =
-                    "Processing your voice with Gnani AI...";
-
             }
-
+            resetMicUI();
+            voiceStatus.textContent = "Processing voice with Gnani AI...";
         }
 
+        function resetMicUI() {
+            isRecording = false;
+            recordButton.classList.remove("recording");
+            micIcon.className = "bi bi-mic-fill";
+            soundWaveBars.classList.remove("recording");
+        }
+
+        async function submitVoiceTranscript(transcript) {
+            voiceStatus.textContent = "Chef Kaveri is preparing your recommendations...";
+            try {
+                const response = await fetch("/voice-query", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ transcript: transcript })
+                });
+
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || "Voice processing failed.");
+                }
+
+                handleVoiceSuccess(data);
+            } catch (error) {
+                showVoiceError(error.message);
+            }
+        }
 
         async function sendAudioToServer(audioBlob) {
-
+            voiceStatus.textContent = "Processing voice with Gnani AI...";
             try {
-
                 const formData = new FormData();
-
                 formData.append("audio", audioBlob, "voice-command.webm");
 
                 const response = await fetch("/voice-command", {
@@ -484,147 +1264,532 @@
                 });
 
                 const data = await response.json();
-
                 if (!response.ok || !data.success) {
-
-                    throw new Error(
-                        data.message || "Voice processing failed."
-                    );
-
+                    throw new Error(data.message || "Voice processing failed.");
                 }
 
-                transcriptText.textContent = data.transcript;
-
-                voiceResult.classList.remove("d-none");
-
-                voiceStatus.textContent = data.message;
-
-                displayVoiceMeals(data.meals);
-                // Play Gnani Timbre voice response
-if (data.audio) {
-    try {
-        const audioBytes = new Uint8Array(
-            data.audio.match(/.{1,2}/g).map(
-                byte => parseInt(byte, 16)
-            )
-        );
-
-        const audioBlob = new Blob(
-            [audioBytes],
-            { type: "audio/mpeg" }
-        );
-
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const voiceAudio = new Audio(audioUrl);
-
-        voiceAudio.onended = () => {
-            URL.revokeObjectURL(audioUrl);
-        };
-
-        await voiceAudio.play();
-
-    } catch (error) {
-        console.error("Voice playback failed:", error);
-        voiceStatus.textContent =
-            "Meals found, but voice playback failed.";
-    }
-} else {
-    console.error("No audio received from Flask.");
-}
-
+                handleVoiceSuccess(data);
             } catch (error) {
-
                 showVoiceError(error.message);
-
             }
-
         }
 
+        function handleVoiceSuccess(data) {
+            transcriptText.textContent = `"${data.transcript}"`;
+            voiceResult.classList.remove("d-none");
+            voiceStatus.textContent = data.message;
+
+            displayVoiceMeals(data.meals);
+
+            // Play voice reply back
+            playVoiceReply(data.audio, data.message);
+        }
+
+        function playVoiceReply(audioHex, spokenText) {
+            soundWaveBars.classList.add("speaking");
+
+            // 1. Try playing Gnani Timbre synthesized MP3
+            if (audioHex) {
+                try {
+                    const audioBytes = new Uint8Array(
+                        audioHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
+                    );
+                    const responseBlob = new Blob([audioBytes], { type: "audio/mpeg" });
+                    const audioUrl = URL.createObjectURL(responseBlob);
+                    currentVoiceAudio = new Audio(audioUrl);
+
+                    currentVoiceAudio.onended = () => {
+                        URL.revokeObjectURL(audioUrl);
+                        soundWaveBars.classList.remove("speaking");
+                    };
+
+                    currentVoiceAudio.play().catch(err => {
+                        console.warn("Gnani audio play blocked, falling back to speech synthesis:", err);
+                        speakBrowserFallback(spokenText);
+                    });
+                    return;
+                } catch (e) {
+                    console.warn("Audio conversion error:", e);
+                }
+            }
+
+            // 2. Fallback: Browser Web SpeechSynthesis
+            speakBrowserFallback(spokenText);
+        }
+
+        function speakBrowserFallback(text) {
+            if (!window.speechSynthesis) {
+                soundWaveBars.classList.remove("speaking");
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.lang = "en-IN";
+
+            utterance.onend = () => {
+                soundWaveBars.classList.remove("speaking");
+            };
+            utterance.onerror = () => {
+                soundWaveBars.classList.remove("speaking");
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
 
         function displayVoiceMeals(meals) {
-
             mealResults.innerHTML = "";
 
             if (!meals || meals.length === 0) {
-
                 mealResults.innerHTML = `
                     <div class="col-12">
-                        <div class="alert alert-warning text-center">
-                            No matching meals found. Try another command.
+                        <div class="text-center py-5 bg-white rounded-4 border p-4 shadow-sm">
+                            <div class="fs-1 text-muted mb-3">🍲</div>
+                            <h4 class="fw-bold">No matching meals found</h4>
+                            <p class="text-muted mb-0">Try asking for another meal category or price.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            meals.forEach(meal => {
+                const col = document.createElement("div");
+                col.className = "col-md-6 col-lg-4 meal-card-col fade-in-up";
+                col.setAttribute("data-name", (meal.name || "").toLowerCase());
+                col.setAttribute("data-category", (meal.category || "").toLowerCase());
+                col.setAttribute("data-foodtype", (meal.food_type || "").toLowerCase());
+                col.setAttribute("data-desc", (meal.description || "").toLowerCase());
+
+                const isVeg = meal.food_type === "Vegetarian";
+                const dietClass = isVeg ? "veg" : "nonveg";
+                const catIcon = meal.category === "Breakfast" ? "🥞" : (meal.category === "Lunch" ? "🍱" : "🍛");
+                const imgSrc = meal.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80";
+
+                col.innerHTML = `
+                    <div class="meal-card-modern">
+                        <div class="card-image-box">
+                            <img src="${imgSrc}"
+                                 alt="${meal.name}"
+                                 class="card-food-img"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80'">
+
+                            <div class="diet-stamp ${dietClass}">
+                                <span class="diet-dot"></span>
+                            </div>
+
+                            <span class="category-badge-floating">
+                                ${catIcon} ${meal.category}
+                            </span>
+
+                            <span class="price-pill-floating">
+                                ₹${Math.round(meal.price)}
+                            </span>
+                        </div>
+
+                        <div class="meal-card-body">
+                            <div class="meal-meta-row">
+                                <span class="meta-rating"><i class="bi bi-star-fill"></i> 4.8</span>
+                                <span><i class="bi bi-clock"></i> 15-20 min</span>
+                                <span><i class="bi bi-fire"></i> Freshly Cooked</span>
+                            </div>
+
+                            <h3 class="meal-title">${meal.name}</h3>
+                            <p class="meal-desc">${meal.description || ""}</p>
+
+                            <div class="meal-card-footer">
+                                <button type="button"
+                                        class="btn-3d-card-badge btn-open-3d"
+                                        data-id="${meal.id}"
+                                        data-name="${meal.name}"
+                                        data-price="${Math.round(meal.price)}"
+                                        data-category="${meal.category}"
+                                        data-foodtype="${meal.food_type}"
+                                        data-desc="${meal.description || ''}"
+                                        data-img="${imgSrc}">
+                                    <i class="bi bi-box-fill"></i> 3D 360°
+                                </button>
+
+                                <button type="button"
+                                        class="btn-card-action btn-add-cart"
+                                        onclick="DailyBiteCart.addItem({id: '${meal.id}', name: '${(meal.name || '').replace(/'/g, "\\'")}', price: ${meal.price}, category: '${meal.category}', food_type: '${meal.food_type}', image_url: '${imgSrc}'})"
+                                        title="Add to Food Cart">
+                                    <i class="bi bi-cart-plus-fill"></i> Cart
+                                </button>
+
+                                <button type="button"
+                                        class="btn-card-action instant-btn"
+                                        onclick="DailyBiteCart.addItem({id: '${meal.id}', name: '${(meal.name || '').replace(/'/g, "\\'")}', price: ${meal.price}, category: '${meal.category}', food_type: '${meal.food_type}', image_url: '${imgSrc}'}, {openCart: true, mode: 'instant'})"
+                                        title="Instant Delivery (25-35 mins)">
+                                    <i class="bi bi-lightning-charge-fill"></i> Now
+                                </button>
+
+                                <button type="button"
+                                        class="btn-card-action secondary btn-quick-plan"
+                                        data-id="${meal.id}"
+                                        data-name="${meal.name}"
+                                        data-category="${meal.category}"
+                                        data-price="${Math.round(meal.price)}"
+                                        title="Add to Weekly Calendar">
+                                    <i class="bi bi-calendar-plus"></i> Plan
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
 
-                return;
-
-            }
-
-            meals.forEach(meal => {
-
-                const mealCard = document.createElement("div");
-
-                mealCard.className = "col-md-4 mb-4";
-
-                const card = document.createElement("div");
-                card.className = "card meal-card h-100 shadow-sm";
-
-                const body = document.createElement("div");
-                body.className = "card-body";
-
-                const title = document.createElement("h5");
-                title.className = "card-title fw-bold";
-                title.textContent = meal.name;
-
-                const foodBadge = document.createElement("span");
-                foodBadge.className = "badge bg-success me-1";
-                foodBadge.textContent = meal.food_type;
-
-                const categoryBadge = document.createElement("span");
-                categoryBadge.className = "badge bg-secondary";
-                categoryBadge.textContent = meal.category;
-
-                const description = document.createElement("p");
-                description.className = "card-text mt-3 text-muted";
-                description.textContent = meal.description || "";
-
-                const price = document.createElement("h5");
-                price.className = "text-success fw-bold";
-                price.textContent = "₹" + meal.price;
-
-                body.append(
-                    title,
-                    foodBadge,
-                    categoryBadge,
-                    description,
-                    price
-                );
-
-                card.appendChild(body);
-                mealCard.appendChild(card);
-
-                mealResults.appendChild(mealCard);
-
+                mealResults.appendChild(col);
             });
 
-        }
+            // Re-bind modal events for newly rendered cards
+            if (typeof initMealDetailsModal === 'function') initMealDetailsModal();
+            if (typeof initQuickPlanModal === 'function') initQuickPlanModal();
+            if (typeof initFood3DStudio === 'function') initFood3DStudio();
 
+            // Smooth scroll down to results
+            mealResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
         function showVoiceError(message) {
-
             voiceError.textContent = message;
             voiceError.classList.remove("d-none");
+            voiceStatus.textContent = "Tap the microphone and speak your request.";
 
-            voiceStatus.textContent = "Something went wrong.";
-
-            recordButton.textContent = "🎤 Start Speaking";
-            recordButton.classList.remove("btn-danger");
-            recordButton.classList.add("btn-success");
-
-            isRecording = false;
-
+            resetMicUI();
         }
 
+        function simulateVoiceQuery(query) {
+            transcriptText.textContent = `"${query}"`;
+            voiceResult.classList.remove("d-none");
+            submitVoiceTranscript(query);
+        }
     </script>
+
+    <!-- ==========================================================================
+         Food Delivery Cart Drawer (Offcanvas)
+         ========================================================================== -->
+    <div class="offcanvas offcanvas-end dailybite-cart-drawer" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+        <div class="offcanvas-header border-bottom py-3">
+            <div class="d-flex align-items-center gap-2">
+                <div class="cart-header-icon">
+                    <i class="bi bi-bag-check-fill text-success fs-5"></i>
+                </div>
+                <div>
+                    <h5 class="offcanvas-title fw-bold mb-0" id="cartOffcanvasLabel">My Food Cart</h5>
+                    <span class="text-muted small" id="cartDrawerSubheading">0 items added</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-sm btn-outline-danger border-0 rounded-pill px-2" id="cartClearBtn" onclick="DailyBiteCart.clearCart()" title="Empty Cart">
+                    <i class="bi bi-trash3"></i> Clear
+                </button>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="offcanvas-body p-0 d-flex flex-column justify-content-between">
+            <!-- Order Mode Selection Tabs -->
+            <div class="p-3 bg-light border-bottom order-mode-tabs-wrapper">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small fw-bold text-uppercase text-muted"><i class="bi bi-lightning-charge text-warning"></i> Delivery Mode</span>
+                    <span class="badge bg-danger-subtle text-danger fw-bold" id="cartModeBadge">⚡ Instant (Now)</span>
+                </div>
+                <div class="order-mode-tabs">
+                    <button type="button" class="order-mode-btn active" data-mode="instant" onclick="DailyBiteCart.setOrderType('instant')">
+                        <span class="mode-icon">⚡</span>
+                        <span class="mode-title">Instant</span>
+                        <span class="mode-desc">25-35 mins</span>
+                    </button>
+                    <button type="button" class="order-mode-btn" data-mode="tomorrow" onclick="DailyBiteCart.setOrderType('tomorrow')">
+                        <span class="mode-icon">🌅</span>
+                        <span class="mode-title">Tomorrow</span>
+                        <span class="mode-desc">Meal slot</span>
+                    </button>
+                    <button type="button" class="order-mode-btn" data-mode="multi_day" onclick="DailyBiteCart.setOrderType('multi_day')">
+                        <span class="mode-icon">📅</span>
+                        <span class="mode-title">Multi-Day</span>
+                        <span class="mode-desc">2-7 Days</span>
+                    </button>
+                </div>
+
+                <!-- Contextual: Tomorrow Slot Picker -->
+                <div id="tomorrowSlotSelector" class="mt-3 d-none">
+                    <label class="small fw-bold text-muted mb-1">Select Delivery Meal Time for Tomorrow:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="slot-pill-btn" data-slot="Breakfast 8:30 AM" onclick="DailyBiteCart.setTomorrowSlot('Breakfast 8:30 AM')">
+                            🥞 Breakfast (8:30 AM)
+                        </button>
+                        <button type="button" class="slot-pill-btn active" data-slot="Lunch 1:00 PM" onclick="DailyBiteCart.setTomorrowSlot('Lunch 1:00 PM')">
+                            🍱 Lunch (1:00 PM)
+                        </button>
+                        <button type="button" class="slot-pill-btn" data-slot="Dinner 8:00 PM" onclick="DailyBiteCart.setTomorrowSlot('Dinner 8:00 PM')">
+                            🍛 Dinner (8:00 PM)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contextual: Multi-Day Duration Picker -->
+                <div id="multiDayDurationSelector" class="mt-3 d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-bold text-muted">Choose Plan Duration:</span>
+                        <span class="badge bg-success-subtle text-success small fw-bold">Free Delivery</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="duration-pill-btn" data-days="2" onclick="DailyBiteCart.setPlanDuration(2)">
+                            2 Days (Weekend)
+                        </button>
+                        <button type="button" class="duration-pill-btn active" data-days="3" onclick="DailyBiteCart.setPlanDuration(3)">
+                            3 Days (Midweek)
+                        </button>
+                        <button type="button" class="duration-pill-btn" data-days="5" onclick="DailyBiteCart.setPlanDuration(5)">
+                            5 Days (Workweek)
+                        </button>
+                        <button type="button" class="duration-pill-btn" data-days="7" onclick="DailyBiteCart.setPlanDuration(7)">
+                            7 Days (Full Week)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart Items Scroll Area -->
+            <div class="p-3 cart-items-list flex-grow-1 overflow-y-auto" id="cartItemsContainer">
+                <!-- Dynamically populated by DailyBiteCart -->
+            </div>
+
+            <!-- Cart Bill Summary Footer -->
+            <div class="p-3 bg-white border-top shadow-sm cart-footer-summary" id="cartFooterSummary">
+                <div class="cart-bill-details mb-3">
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+                        <span>Item Subtotal</span>
+                        <span id="cartSubtotalText">₹0</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+                        <span>Delivery Fee</span>
+                        <span id="cartDeliveryFeeText" class="text-success fw-bold">FREE</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+                        <span>Taxes & Restaurant Charges (5%)</span>
+                        <span id="cartTaxesText">₹0</span>
+                    </div>
+                    <hr class="my-2 border-dashed">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-6">To Pay</span>
+                        <span class="fw-bold fs-5 text-success" id="cartTotalText">₹0</span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary-gradient w-100 py-3 d-flex justify-content-between align-items-center rounded-3" id="cartCheckoutBtn" onclick="DailyBiteCart.openCheckout()">
+                    <span class="fw-bold">Proceed to Checkout</span>
+                    <span class="fw-bold" id="cartCheckoutTotal">₹0 <i class="bi bi-arrow-right ms-1"></i></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         Checkout & Delivery Details Modal
+         ========================================================================== -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                <div class="modal-header bg-dark text-white p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="badge-icon green fs-4">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold mb-0">Confirm Your Food Order</h5>
+                            <span class="text-white-50 small" id="checkoutOrderModeSummary">Instant Delivery (25-35 mins)</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="checkoutForm" onsubmit="DailyBiteCart.handleCheckoutSubmit(event)">
+                    <div class="modal-body p-4">
+                        <div class="row g-4">
+                            <!-- Left: Customer Details -->
+                            <div class="col-md-7">
+                                <h6 class="fw-bold mb-3 text-dark">
+                                    <i class="bi bi-geo-alt-fill text-success me-1"></i> Delivery Address & Contact
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Full Name</label>
+                                    <input type="text" class="form-control rounded-3" id="custName" required placeholder="e.g. Rahul Sharma" value="Valued Foodie">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Phone Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">+91</span>
+                                        <input type="tel" class="form-control rounded-end-3" id="custPhone" required placeholder="9876543210" value="9876543210" pattern="[0-9]{10}">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Delivery Address</label>
+                                    <textarea class="form-control rounded-3" id="custAddress" rows="2" required placeholder="Flat / House no, Building name, Street, Landmark">Flat 402, Green Valley Apartments, Madhapur, Hyderabad</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-muted">Special Cooking / Delivery Instructions (Optional)</label>
+                                    <input type="text" class="form-control rounded-3" id="custInstructions" placeholder="e.g., Ring bell, less spicy, extra chutney">
+                                </div>
+                            </div>
+
+                            <!-- Right: Payment & Summary -->
+                            <div class="col-md-5">
+                                <h6 class="fw-bold mb-3 text-dark">
+                                    <i class="bi bi-credit-card-fill text-success me-1"></i> Payment Method
+                                </h6>
+
+                                <div class="payment-methods-stack d-flex flex-column gap-2 mb-4">
+                                    <label class="payment-method-tile active" onclick="DailyBiteCart.selectPayment('UPI', this)">
+                                        <input type="radio" name="payment_method" value="UPI" checked class="d-none">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="payment-icon upi">
+                                                <i class="bi bi-qr-code"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">UPI Instant</div>
+                                                <div class="text-muted small">GPay, PhonePe, Paytm, BHIM</div>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success check-icon fs-5"></i>
+                                    </label>
+
+                                    <label class="payment-method-tile" onclick="DailyBiteCart.selectPayment('Card', this)">
+                                        <input type="radio" name="payment_method" value="Card" class="d-none">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="payment-icon card">
+                                                <i class="bi bi-credit-card-2-front"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">Credit / Debit Card</div>
+                                                <div class="text-muted small">Visa, Mastercard, RuPay</div>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success check-icon fs-5"></i>
+                                    </label>
+
+                                    <label class="payment-method-tile" onclick="DailyBiteCart.selectPayment('COD', this)">
+                                        <input type="radio" name="payment_method" value="COD" class="d-none">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="payment-icon cod">
+                                                <i class="bi bi-cash-stack"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">Cash on Delivery</div>
+                                                <div class="text-muted small">Pay at door via cash or UPI</div>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success check-icon fs-5"></i>
+                                    </label>
+                                </div>
+
+                                <!-- Mini Order Summary -->
+                                <div class="p-3 bg-light rounded-4 border">
+                                    <div class="d-flex justify-content-between small text-muted mb-1">
+                                        <span id="checkoutItemCountSummary">0 Items</span>
+                                        <span id="checkoutSubtotalSummary">₹0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small text-muted mb-1">
+                                        <span>Delivery</span>
+                                        <span id="checkoutDeliverySummary" class="text-success fw-bold">FREE</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small text-muted mb-2">
+                                        <span>GST (5%)</span>
+                                        <span id="checkoutTaxSummary">₹0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between fw-bold fs-6 text-dark border-top pt-2">
+                                        <span>Grand Total</span>
+                                        <span class="text-success" id="checkoutGrandTotalSummary">₹0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light border-0 px-4 py-3 d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                            Modify Cart
+                        </button>
+                        <button type="submit" class="btn btn-primary-gradient px-4 py-2" id="confirmOrderSubmitBtn">
+                            <i class="bi bi-lock-fill me-1"></i> Place Order (<span id="btnPayAmount">₹0</span>)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         Order Success & Live Tracker Modal
+         ========================================================================== -->
+    <div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden text-center p-4">
+                <div class="my-3">
+                    <div class="order-success-check-badge mx-auto">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold mb-1">Order Placed Successfully! 🎉</h4>
+                <p class="text-muted small mb-3">Order Number: <strong class="text-dark" id="successOrderNumber">DB-12345</strong></p>
+
+                <div class="p-3 bg-light rounded-4 border mb-4 text-start">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small text-muted fw-bold">DELIVERY SCHEDULE</span>
+                        <span class="badge bg-success-subtle text-success" id="successScheduleBadge">Instant Delivery</span>
+                    </div>
+                    <div class="fw-bold text-dark fs-6" id="successScheduleDetail">Delivered in 25-35 minutes</div>
+                    <div class="text-muted small mt-1" id="successAddressDetail">Delivering to your saved address</div>
+                </div>
+
+                <!-- Live Tracking Stepper -->
+                <div class="order-live-stepper mb-4">
+                    <div class="step-point completed">
+                        <div class="step-dot"><i class="bi bi-check-circle-fill"></i></div>
+                        <span class="step-label">Confirmed</span>
+                    </div>
+                    <div class="step-line active"></div>
+                    <div class="step-point current">
+                        <div class="step-dot pulse"><i class="bi bi-fire"></i></div>
+                        <span class="step-label">Cooking</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-point">
+                        <div class="step-dot"><i class="bi bi-bicycle"></i></div>
+                        <span class="step-label">On Way</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-point">
+                        <div class="step-dot"><i class="bi bi-house-door-fill"></i></div>
+                        <span class="step-label">Delivered</span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="/orders" class="btn btn-outline-custom flex-grow-1">
+                        <i class="bi bi-clock-history"></i> Track on Orders Page
+                    </a>
+                    <button type="button" class="btn btn-primary-gradient flex-grow-1" data-bs-dismiss="modal">
+                        Continue Browsing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DailyBite Food Delivery Cart Engine -->
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
 
 </body>
 </html>

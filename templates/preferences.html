@@ -1,161 +1,671 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Meal Preferences | DailyBite</title>
+    <title>My Meal Preferences | DailyBite</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <!-- Google Fonts & Bootstrap Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Modern Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<nav class="navbar navbar-dark bg-success">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/">DailyBite</a>
+    <!-- Modern Glassmorphism Navigation Bar -->
+    <nav class="navbar navbar-expand-lg dailybite-navbar">
+        <div class="container">
 
-        <a href="{{ url_for('planner') }}"
-           class="btn btn-light btn-sm">
-            Weekly Planner
-        </a>
-    </div>
-</nav>
+            <a class="brand-wrapper" href="/">
+                <div class="brand-icon-box">
+                    <i class="bi bi-egg-fried"></i>
+                </div>
+                <h1 class="brand-text">Daily<span>Bite</span></h1>
+            </a>
 
-<div class="container mt-5 mb-5">
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                <i class="bi bi-list fs-2 text-dark"></i>
+            </button>
 
-    <h1 class="fw-bold">Your Meal Preferences 🍽️</h1>
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav ms-auto align-items-center gap-1 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                    </li>
 
-    <p class="text-muted">
-        Tell us what you like so DailyBite can suggest suitable meals.
-    </p>
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/planner">
+                            <i class="bi bi-calendar-week"></i> Flexible Planner
+                        </a>
+                    </li>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/orders">
+                            <i class="bi bi-bag-check-fill text-success"></i> My Orders
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link active" href="/preferences">
+                            <i class="bi bi-sliders"></i> Preferences
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <button type="button" class="btn btn-primary-gradient py-2 px-3 shadow-sm text-white d-flex align-items-center gap-2" onclick="DailyBiteCart.openCart()">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span>Cart</span>
+                            <span class="badge bg-white text-dark rounded-pill cart-count-badge">0</span>
+                        </button>
+                    </li>
+                </ul>
             </div>
-        {% endfor %}
-    {% endwith %}
 
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
+        </div>
+    </nav>
 
-            <form action="{{ url_for('save_preferences') }}"
-                  method="POST">
 
-                <div class="mb-4">
+    <!-- Main Container -->
+    <div class="container mt-4 mb-5" style="max-width: 860px;">
 
-                    <label class="form-label fw-bold">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <span class="hero-tag">
+                <i class="bi bi-person-gear"></i> Personalization
+            </span>
+            <h2 class="fw-bold mb-2">My Meal Preferences 🍽️</h2>
+            <p class="text-muted">
+                Customize your diet, maximum price limit, and default meal categories. DailyBite will tailor all recommendations just for you.
+            </p>
+        </div>
+
+        <!-- Flashed Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert custom-alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi {% if category == 'success' %}bi-check-circle-fill text-success{% else %}bi-exclamation-triangle-fill text-danger{% endif %} fs-5"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+
+        <!-- Preferences Form Card -->
+        <div class="card shadow-md border-0 rounded-4 p-4 p-md-5 bg-white">
+
+            <form action="{{ url_for('save_preferences') }}" method="POST" id="preferencesForm">
+
+                <!-- 1. Dietary Preference Visual Cards -->
+                <div class="mb-5">
+                    <label class="form-label fw-bold fs-5 mb-1 d-block">
                         1. What type of food do you prefer?
                     </label>
+                    <p class="text-muted small mb-3">Choose the dietary style that matches your lifestyle.</p>
 
-                    <select name="food_type" class="form-select" required>
+                    <!-- Hidden input to store chosen preference -->
+                    <input type="hidden" name="food_type" id="selectedFoodType" value="{{ preferences['food_type'] }}">
 
-                        <option value="Both"
-                            {% if preferences['food_type'] == 'Both' %}selected{% endif %}>
-                            Both Vegetarian and Non-Vegetarian
-                        </option>
+                    <div class="row g-3">
+                        <!-- Both -->
+                        <div class="col-md-4">
+                            <div class="pref-selection-card {% if preferences['food_type'] == 'Both' %}selected{% endif %}"
+                                 data-value="Both"
+                                 onclick="selectFoodType('Both')">
+                                <div class="pref-icon-circle text-warning">
+                                    <i class="bi bi-egg-fried"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">Both</h5>
+                                <p class="text-muted small mb-0">Vegetarian &amp; Non-Vegetarian</p>
+                            </div>
+                        </div>
 
-                        <option value="Vegetarian"
-                            {% if preferences['food_type'] == 'Vegetarian' %}selected{% endif %}>
-                            Vegetarian
-                        </option>
+                        <!-- Vegetarian -->
+                        <div class="col-md-4">
+                            <div class="pref-selection-card {% if preferences['food_type'] == 'Vegetarian' %}selected{% endif %}"
+                                 data-value="Vegetarian"
+                                 onclick="selectFoodType('Vegetarian')">
+                                <div class="pref-icon-circle text-success">
+                                    <i class="bi bi-flower1"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">Vegetarian</h5>
+                                <p class="text-muted small mb-0">100% Pure Veg Dishes</p>
+                            </div>
+                        </div>
 
-                        <option value="Non-Vegetarian"
-                            {% if preferences['food_type'] == 'Non-Vegetarian' %}selected{% endif %}>
-                            Non-Vegetarian
-                        </option>
-
-                    </select>
-
+                        <!-- Non-Vegetarian -->
+                        <div class="col-md-4">
+                            <div class="pref-selection-card {% if preferences['food_type'] == 'Non-Vegetarian' %}selected{% endif %}"
+                                 data-value="Non-Vegetarian"
+                                 onclick="selectFoodType('Non-Vegetarian')">
+                                <div class="pref-icon-circle text-danger">
+                                    <i class="bi bi-fire"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">Non-Veg</h5>
+                                <p class="text-muted small mb-0">Chicken, Fish, Eggs &amp; Meat</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-4">
 
-                    <label class="form-label fw-bold">
-                        2. What is your maximum spending per meal?
-                    </label>
+                <!-- 2. Maximum Budget Per Meal -->
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold fs-5 mb-0">
+                            2. Maximum spending per meal
+                        </label>
+                        <span class="badge bg-success-subtle text-success fs-5 fw-bold px-3 py-1 rounded-pill" id="prefBudgetDisplay">
+                            ₹{{ '%.0f'|format(preferences['max_price']) }}
+                        </span>
+                    </div>
+                    <p class="text-muted small mb-3">DailyBite will recommend meals up to this price threshold.</p>
 
-                    <div class="input-group">
-
-                        <span class="input-group-text">₹</span>
-
+                    <div class="input-group mb-3" style="max-width: 280px;">
+                        <span class="input-group-text bg-light fw-bold">₹</span>
                         <input type="number"
                                name="max_price"
+                               id="prefBudgetNumber"
                                class="form-control"
-                               min="1"
-                               step="0.01"
-                               value="{{ preferences['max_price'] }}"
+                               min="10"
+                               max="500"
+                               step="5"
+                               value="{{ '%.0f'|format(preferences['max_price']) }}"
                                required>
-
                     </div>
 
+                    <!-- Range Slider -->
+                    <input type="range"
+                           id="prefBudgetSlider"
+                           class="range-input mb-2"
+                           min="30"
+                           max="300"
+                           step="5"
+                           value="{{ '%.0f'|format(preferences['max_price']) }}">
+
+                    <!-- Quick Preset Chips -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(40)">₹40</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(60)">₹60</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(100)">₹100</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(150)">₹150</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(200)">₹200</button>
+                    </div>
                 </div>
 
-                <div class="mb-4">
 
-                    <label class="form-label fw-bold">
-                        3. Which meals do you prefer?
+                <!-- 3. Preferred Meal Categories -->
+                <div class="mb-5">
+                    <label class="form-label fw-bold fs-5 mb-1 d-block">
+                        3. Which meals do you want to plan?
                     </label>
+                    <p class="text-muted small mb-3">Select the meal categories you want to include in suggestions.</p>
 
-                    <div class="form-check">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               name="breakfast"
-                               value="1"
-                               id="breakfast"
-                               {% if preferences['breakfast'] %}checked{% endif %}>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="card h-100 p-3 border rounded-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" for="breakfast">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-3">🥞</span>
+                                    <div>
+                                        <div class="fw-bold">Breakfast</div>
+                                        <div class="text-muted small">Morning starter</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch fs-4 mb-0">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="breakfast"
+                                           value="1"
+                                           id="breakfast"
+                                           {% if preferences['breakfast'] %}checked{% endif %}>
+                                </div>
+                            </label>
+                        </div>
 
-                        <label class="form-check-label" for="breakfast">
-                            Breakfast
-                        </label>
+                        <div class="col-md-4">
+                            <label class="card h-100 p-3 border rounded-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" for="lunch">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-3">🍱</span>
+                                    <div>
+                                        <div class="fw-bold">Lunch</div>
+                                        <div class="text-muted small">Midday meal</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch fs-4 mb-0">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="lunch"
+                                           value="1"
+                                           id="lunch"
+                                           {% if preferences['lunch'] %}checked{% endif %}>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="card h-100 p-3 border rounded-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" for="dinner">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-3">🍛</span>
+                                    <div>
+                                        <div class="fw-bold">Dinner</div>
+                                        <div class="text-muted small">Evening dinner</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch fs-4 mb-0">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="dinner"
+                                           value="1"
+                                           id="dinner"
+                                           {% if preferences['dinner'] %}checked{% endif %}>
+                                </div>
+                            </label>
+                        </div>
                     </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               name="lunch"
-                               value="1"
-                               id="lunch"
-                               {% if preferences['lunch'] %}checked{% endif %}>
-
-                        <label class="form-check-label" for="lunch">
-                            Lunch
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               name="dinner"
-                               value="1"
-                               id="dinner"
-                               {% if preferences['dinner'] %}checked{% endif %}>
-
-                        <label class="form-check-label" for="dinner">
-                            Dinner
-                        </label>
-                    </div>
-
                 </div>
 
-                <button type="submit"
-                        class="btn btn-success w-100">
-                    Save My Preferences
-                </button>
+
+                <!-- Submit Button -->
+                <div class="pt-3 border-top">
+                    <button type="submit" class="btn btn-primary-gradient w-100 py-3 fs-6 justify-content-center shadow-md">
+                        <i class="bi bi-check2-circle fs-5 me-1"></i> Save My Preferences
+                    </button>
+                </div>
 
             </form>
 
         </div>
+
     </div>
 
-</div>
+
+    <!-- Footer -->
+    <footer class="dailybite-footer">
+        <div class="container text-center">
+            <p class="text-muted small mb-0">
+                © 2026 DailyBite • Smart Meal Planning & Budget Management Made Simple.
+            </p>
+        </div>
+    </footer>
+
+
+    <!-- Bootstrap & Custom Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Preferences Interactive JS -->
+    <script>
+        function selectFoodType(val) {
+            document.getElementById('selectedFoodType').value = val;
+            document.querySelectorAll('.pref-selection-card').forEach(card => {
+                if (card.getAttribute('data-value') === val) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+
+        const slider = document.getElementById('prefBudgetSlider');
+        const numInput = document.getElementById('prefBudgetNumber');
+        const display = document.getElementById('prefBudgetDisplay');
+
+        function updateBudget(val) {
+            slider.value = val;
+            numInput.value = val;
+            display.textContent = '₹' + val;
+        }
+
+        slider.addEventListener('input', function() {
+            updateBudget(this.value);
+        });
+
+        numInput.addEventListener('input', function() {
+            updateBudget(this.value);
+        });
+
+        function setPrefBudget(val) {
+            updateBudget(val);
+        }
+    </script>
+
+    <!-- ==========================================================================
+         Food Delivery Cart Drawer (Offcanvas)
+         ========================================================================== -->
+    <div class="offcanvas offcanvas-end dailybite-cart-drawer" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+        <div class="offcanvas-header border-bottom py-3">
+            <div class="d-flex align-items-center gap-2">
+                <div class="cart-header-icon">
+                    <i class="bi bi-bag-check-fill text-success fs-5"></i>
+                </div>
+                <div>
+                    <h5 class="offcanvas-title fw-bold mb-0" id="cartOffcanvasLabel">My Food Cart</h5>
+                    <span class="text-muted small" id="cartDrawerSubheading">0 items added</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-sm btn-outline-danger border-0 rounded-pill px-2" id="cartClearBtn" onclick="DailyBiteCart.clearCart()" title="Empty Cart">
+                    <i class="bi bi-trash3"></i> Clear
+                </button>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="offcanvas-body p-0 d-flex flex-column justify-content-between">
+            <!-- Order Mode Selection Tabs -->
+            <div class="p-3 bg-light border-bottom order-mode-tabs-wrapper">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small fw-bold text-uppercase text-muted"><i class="bi bi-lightning-charge text-warning"></i> Delivery Mode</span>
+                    <span class="badge bg-danger-subtle text-danger fw-bold" id="cartModeBadge">⚡ Instant (Now)</span>
+                </div>
+                <div class="order-mode-tabs">
+                    <button type="button" class="order-mode-btn active" data-mode="instant" onclick="DailyBiteCart.setOrderType('instant')">
+                        <span class="mode-icon">⚡</span>
+                        <span class="mode-title">Instant</span>
+                        <span class="mode-desc">25-35 mins</span>
+                    </button>
+                    <button type="button" class="order-mode-btn" data-mode="tomorrow" onclick="DailyBiteCart.setOrderType('tomorrow')">
+                        <span class="mode-icon">🌅</span>
+                        <span class="mode-title">Tomorrow</span>
+                        <span class="mode-desc">Meal slot</span>
+                    </button>
+                    <button type="button" class="order-mode-btn" data-mode="multi_day" onclick="DailyBiteCart.setOrderType('multi_day')">
+                        <span class="mode-icon">📅</span>
+                        <span class="mode-title">Multi-Day</span>
+                        <span class="mode-desc">2-7 Days</span>
+                    </button>
+                </div>
+
+                <!-- Contextual: Tomorrow Slot Picker -->
+                <div id="tomorrowSlotSelector" class="mt-3 d-none">
+                    <label class="small fw-bold text-muted mb-1">Select Delivery Meal Time for Tomorrow:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="slot-pill-btn" data-slot="Breakfast 8:30 AM" onclick="DailyBiteCart.setTomorrowSlot('Breakfast 8:30 AM')">
+                            🥞 Breakfast (8:30 AM)
+                        </button>
+                        <button type="button" class="slot-pill-btn active" data-slot="Lunch 1:00 PM" onclick="DailyBiteCart.setTomorrowSlot('Lunch 1:00 PM')">
+                            🍱 Lunch (1:00 PM)
+                        </button>
+                        <button type="button" class="slot-pill-btn" data-slot="Dinner 8:00 PM" onclick="DailyBiteCart.setTomorrowSlot('Dinner 8:00 PM')">
+                            🍛 Dinner (8:00 PM)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contextual: Multi-Day Duration Picker -->
+                <div id="multiDayDurationSelector" class="mt-3 d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-bold text-muted">Choose Plan Duration:</span>
+                        <span class="badge bg-success-subtle text-success small fw-bold">Free Delivery</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="duration-pill-btn" data-days="2" onclick="DailyBiteCart.setPlanDuration(2)">
+                            2 Days (Weekend)
+                        </button>
+                        <button type="button" class="duration-pill-btn active" data-days="3" onclick="DailyBiteCart.setPlanDuration(3)">
+                            3 Days (Midweek)
+                        </button>
+                        <button type="button" class="duration-pill-btn" data-days="5" onclick="DailyBiteCart.setPlanDuration(5)">
+                            5 Days (Workweek)
+                        </button>
+                        <button type="button" class="duration-pill-btn" data-days="7" onclick="DailyBiteCart.setPlanDuration(7)">
+                            7 Days (Full Week)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart Items Scroll Area -->
+            <div class="p-3 cart-items-list flex-grow-1 overflow-y-auto" id="cartItemsContainer">
+                <!-- Dynamically populated by DailyBiteCart -->
+            </div>
+
+            <!-- Cart Bill Summary Footer -->
+            <div class="p-3 bg-white border-top shadow-sm cart-footer-summary" id="cartFooterSummary">
+                <div class="cart-bill-details mb-3">
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+                        <span>Item Subtotal</span>
+                        <span id="cartSubtotalText">₹0</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+                        <span>Delivery Fee</span>
+                        <span id="cartDeliveryFeeText" class="text-success fw-bold">FREE</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small mb-1">
+                        <span>Taxes & Restaurant Charges (5%)</span>
+                        <span id="cartTaxesText">₹0</span>
+                    </div>
+                    <hr class="my-2 border-dashed">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-6">To Pay</span>
+                        <span class="fw-bold fs-5 text-success" id="cartTotalText">₹0</span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary-gradient w-100 py-3 d-flex justify-content-between align-items-center rounded-3" id="cartCheckoutBtn" onclick="DailyBiteCart.openCheckout()">
+                    <span class="fw-bold">Proceed to Checkout</span>
+                    <span class="fw-bold" id="cartCheckoutTotal">₹0 <i class="bi bi-arrow-right ms-1"></i></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         Checkout & Delivery Details Modal
+         ========================================================================== -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                <div class="modal-header bg-dark text-white p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="badge-icon green fs-4">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold mb-0">Confirm Your Food Order</h5>
+                            <span class="text-white-50 small" id="checkoutOrderModeSummary">Instant Delivery (25-35 mins)</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="checkoutForm" onsubmit="DailyBiteCart.handleCheckoutSubmit(event)">
+                    <div class="modal-body p-4">
+                        <div class="row g-4">
+                            <!-- Left: Customer Details -->
+                            <div class="col-md-7">
+                                <h6 class="fw-bold mb-3 text-dark">
+                                    <i class="bi bi-geo-alt-fill text-success me-1"></i> Delivery Address & Contact
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Full Name</label>
+                                    <input type="text" class="form-control rounded-3" id="custName" required placeholder="e.g. Rahul Sharma" value="Valued Foodie">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Phone Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">+91</span>
+                                        <input type="tel" class="form-control rounded-end-3" id="custPhone" required placeholder="9876543210" value="9876543210" pattern="[0-9]{10}">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Delivery Address</label>
+                                    <textarea class="form-control rounded-3" id="custAddress" rows="2" required placeholder="Flat / House no, Building name, Street, Landmark">Flat 402, Green Valley Apartments, Madhapur, Hyderabad</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-muted">Special Cooking / Delivery Instructions (Optional)</label>
+                                    <input type="text" class="form-control rounded-3" id="custInstructions" placeholder="e.g., Ring bell, less spicy, extra chutney">
+                                </div>
+                            </div>
+
+                            <!-- Right: Payment & Summary -->
+                            <div class="col-md-5">
+                                <h6 class="fw-bold mb-3 text-dark">
+                                    <i class="bi bi-credit-card-fill text-success me-1"></i> Payment Method
+                                </h6>
+
+                                <div class="payment-methods-stack d-flex flex-column gap-2 mb-4">
+                                    <label class="payment-method-tile active" onclick="DailyBiteCart.selectPayment('UPI', this)">
+                                        <input type="radio" name="payment_method" value="UPI" checked class="d-none">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="payment-icon upi">
+                                                <i class="bi bi-qr-code"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">UPI Instant</div>
+                                                <div class="text-muted small">GPay, PhonePe, Paytm, BHIM</div>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success check-icon fs-5"></i>
+                                    </label>
+
+                                    <label class="payment-method-tile" onclick="DailyBiteCart.selectPayment('Card', this)">
+                                        <input type="radio" name="payment_method" value="Card" class="d-none">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="payment-icon card">
+                                                <i class="bi bi-credit-card-2-front"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">Credit / Debit Card</div>
+                                                <div class="text-muted small">Visa, Mastercard, RuPay</div>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success check-icon fs-5"></i>
+                                    </label>
+
+                                    <label class="payment-method-tile" onclick="DailyBiteCart.selectPayment('COD', this)">
+                                        <input type="radio" name="payment_method" value="COD" class="d-none">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="payment-icon cod">
+                                                <i class="bi bi-cash-stack"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">Cash on Delivery</div>
+                                                <div class="text-muted small">Pay at door via cash or UPI</div>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success check-icon fs-5"></i>
+                                    </label>
+                                </div>
+
+                                <!-- Mini Order Summary -->
+                                <div class="p-3 bg-light rounded-4 border">
+                                    <div class="d-flex justify-content-between small text-muted mb-1">
+                                        <span id="checkoutItemCountSummary">0 Items</span>
+                                        <span id="checkoutSubtotalSummary">₹0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small text-muted mb-1">
+                                        <span>Delivery</span>
+                                        <span id="checkoutDeliverySummary" class="text-success fw-bold">FREE</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small text-muted mb-2">
+                                        <span>GST (5%)</span>
+                                        <span id="checkoutTaxSummary">₹0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between fw-bold fs-6 text-dark border-top pt-2">
+                                        <span>Grand Total</span>
+                                        <span class="text-success" id="checkoutGrandTotalSummary">₹0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light border-0 px-4 py-3 d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                            Modify Cart
+                        </button>
+                        <button type="submit" class="btn btn-primary-gradient px-4 py-2" id="confirmOrderSubmitBtn">
+                            <i class="bi bi-lock-fill me-1"></i> Place Order (<span id="btnPayAmount">₹0</span>)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         Order Success & Live Tracker Modal
+         ========================================================================== -->
+    <div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden text-center p-4">
+                <div class="my-3">
+                    <div class="order-success-check-badge mx-auto">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold mb-1">Order Placed Successfully! 🎉</h4>
+                <p class="text-muted small mb-3">Order Number: <strong class="text-dark" id="successOrderNumber">DB-12345</strong></p>
+
+                <div class="p-3 bg-light rounded-4 border mb-4 text-start">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small text-muted fw-bold">DELIVERY SCHEDULE</span>
+                        <span class="badge bg-success-subtle text-success" id="successScheduleBadge">Instant Delivery</span>
+                    </div>
+                    <div class="fw-bold text-dark fs-6" id="successScheduleDetail">Delivered in 25-35 minutes</div>
+                    <div class="text-muted small mt-1" id="successAddressDetail">Delivering to your saved address</div>
+                </div>
+
+                <!-- Live Tracking Stepper -->
+                <div class="order-live-stepper mb-4">
+                    <div class="step-point completed">
+                        <div class="step-dot"><i class="bi bi-check-circle-fill"></i></div>
+                        <span class="step-label">Confirmed</span>
+                    </div>
+                    <div class="step-line active"></div>
+                    <div class="step-point current">
+                        <div class="step-dot pulse"><i class="bi bi-fire"></i></div>
+                        <span class="step-label">Cooking</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-point">
+                        <div class="step-dot"><i class="bi bi-bicycle"></i></div>
+                        <span class="step-label">On Way</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-point">
+                        <div class="step-dot"><i class="bi bi-house-door-fill"></i></div>
+                        <span class="step-label">Delivered</span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="/orders" class="btn btn-outline-custom flex-grow-1">
+                        <i class="bi bi-clock-history"></i> Track on Orders Page
+                    </a>
+                    <button type="button" class="btn btn-primary-gradient flex-grow-1" data-bs-dismiss="modal">
+                        Continue Browsing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DailyBite Food Delivery Cart Engine -->
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
 
 </body>
 </html>

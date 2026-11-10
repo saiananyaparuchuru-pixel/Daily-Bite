@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Weekly Meal Planner | DailyBite</title>
+
+    <!-- Google Fonts & Bootstrap Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Modern Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- Modern Glassmorphism Navigation Bar -->
+    <nav class="navbar navbar-expand-lg dailybite-navbar">
+        <div class="container">
+
+            <a class="brand-wrapper" href="/">
+                <div class="brand-icon-box">
+                    <i class="bi bi-egg-fried"></i>
+                </div>
+                <h1 class="brand-text">Daily<span>Bite</span></h1>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                <i class="bi bi-list fs-2 text-dark"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav ms-auto align-items-center gap-1 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link active" href="/planner">
+                            <i class="bi bi-calendar-week"></i> Weekly Planner
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/preferences">
+                            <i class="bi bi-sliders"></i> My Preferences
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <a href="/" class="btn btn-outline-custom py-2 px-3">
+                            <i class="bi bi-search"></i> Browse Meals
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- Main Content Container -->
+    <div class="container mt-4 mb-5">
+
+        <!-- Page Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <span class="hero-tag mb-2">
+                    <i class="bi bi-calendar2-range-fill"></i> Smart Scheduling
+                </span>
+                <h2 class="fw-bold mb-1">Weekly Meal Planner 🍽️</h2>
+                <p class="text-muted mb-0">
+                    Plan your breakfast, lunch, and dinner with automatic budget calculations.
+                </p>
+            </div>
+
+            <!-- Quick Budget Adjustment Trigger -->
+            <button class="btn btn-outline-custom mt-3 mt-md-0" type="button" data-bs-toggle="collapse" data-bs-target="#budgetFormCollapse">
+                <i class="bi bi-pencil-square text-success me-1"></i> Edit Weekly Budget
+            </button>
+        </div>
+
+        <!-- Flashed Alerts -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert custom-alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi {% if category == 'success' %}bi-check-circle-fill text-success{% else %}bi-exclamation-triangle-fill text-danger{% endif %} fs-5"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+
+        <!-- Weekly Budget Health Dashboard -->
+        <div class="budget-dashboard-card">
+
+            <!-- Budget Edit Collapse Box -->
+            <div class="collapse mb-4" id="budgetFormCollapse">
+                <div class="p-4 bg-light rounded-4 border">
+                    <h5 class="fw-bold mb-2">Set Your Target Weekly Budget</h5>
+                    <p class="text-muted small mb-3">Adjust your weekly spending limit to keep your meal plans on track.</p>
+                    <form action="{{ url_for('save_budget') }}" method="POST" class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white fw-bold">₹</span>
+                                <input type="number"
+                                       name="weekly_limit"
+                                       class="form-control"
+                                       min="1"
+                                       step="1"
+                                       value="{{ '%.0f'|format(weekly_limit) }}"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary-gradient w-100 justify-content-center">
+                                <i class="bi bi-check2"></i> Save Budget
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Budget Calculations & Visual Progress -->
+            {% set pct = (weekly_budget / weekly_limit * 100) if weekly_limit > 0 else 0 %}
+            {% set pct_clamped = 100 if pct > 100 else pct %}
+
+            <div class="row align-items-center mb-3">
+                <div class="col-md-6">
+                    <h4 class="fw-bold mb-0">
+                        <i class="bi bi-wallet2 text-success me-2"></i>Budget Overview
+                    </h4>
+                </div>
+                <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                    {% if remaining_budget >= 0 %}
+                        <span class="badge bg-success-subtle text-success fs-6 fw-bold px-3 py-2 rounded-pill">
+                            <i class="bi bi-check-circle-fill me-1"></i> Within Budget ({{ "%.1f"|format(pct) }}% used)
+                        </span>
+                    {% else %}
+                        <span class="badge bg-danger-subtle text-danger fs-6 fw-bold px-3 py-2 rounded-pill">
+                            <i class="bi bi-exclamation-octagon-fill me-1"></i> Budget Exceeded by ₹{{ "%.2f"|format(remaining_budget|abs) }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Visual Gradient Progress Track -->
+            <div class="budget-progress-track">
+                <div class="budget-progress-fill {% if remaining_budget < 0 %}danger{% elif pct > 80 %}warning{% endif %}"
+                     style="width: {{ pct_clamped }}%;"></div>
+            </div>
+
+            <!-- 3 Stat Metric Cards -->
+            <div class="row g-3 mt-2">
+                <div class="col-md-4">
+                    <div class="budget-metric-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted small fw-bold text-uppercase">Weekly Limit</span>
+                            <i class="bi bi-shield-check text-muted"></i>
+                        </div>
+                        <h3 class="fw-bold mb-0 text-dark">
+                            ₹{{ "%.2f"|format(weekly_limit) }}
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="budget-metric-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted small fw-bold text-uppercase">Planned Cost</span>
+                            <i class="bi bi-basket text-primary"></i>
+                        </div>
+                        <h3 class="fw-bold mb-0 text-primary">
+                            ₹{{ "%.2f"|format(weekly_budget) }}
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="budget-metric-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted small fw-bold text-uppercase">
+                                {% if remaining_budget >= 0 %}Remaining{% else %}Exceeded{% endif %}
+                            </span>
+                            <i class="bi {% if remaining_budget >= 0 %}bi-arrow-down-circle text-success{% else %}bi-arrow-up-circle text-danger{% endif %}"></i>
+                        </div>
+                        <h3 class="fw-bold mb-0 {% if remaining_budget >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ₹{{ "%.2f"|format(remaining_budget|abs) }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- 7-Day Interactive Meal Calendar -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">
+                <i class="bi bi-calendar3 text-success me-2"></i>Day-by-Day Schedule
+            </h4>
+
+            <!-- Mobile Day Quick Filter Buttons -->
+            <div class="d-flex gap-1 overflow-x-auto py-1" style="max-width: 100%;">
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill active day-filter-btn" data-day="all">All Days</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill day-filter-btn" data-day="Monday">Mon</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill day-filter-btn" data-day="Tuesday">Tue</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill day-filter-btn" data-day="Wednesday">Wed</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill day-filter-btn" data-day="Thursday">Thu</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill day-filter-btn" data-day="Friday">Fri</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill day-filter-btn" data-day="Saturday">Sat</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill day-filter-btn" data-day="Sunday">Sun</button>
+            </div>
+        </div>
+
+        <div class="row g-4" id="plannerDaysGrid">
+
+            {% set days = [
+                'Monday', 'Tuesday', 'Wednesday',
+                'Thursday', 'Friday', 'Saturday', 'Sunday'
+            ] %}
+
+            {% for day in days %}
+
+                <!-- Calculate day's total cost -->
+                {% set day_total = namespace(amount=0, count=0) %}
+                {% for plan in plans %}
+                    {% if plan['day'] == day %}
+                        {% set day_total.amount = day_total.amount + plan['price'] %}
+                        {% set day_total.count = day_total.count + 1 %}
+                    {% endif %}
+                {% endfor %}
+
+                <div class="col-md-6 col-lg-4 planner-day-col" data-day-name="{{ day }}">
+                    <div class="day-planner-card">
+
+                        <!-- Day Card Header -->
+                        <div class="day-card-header">
+                            <h5 class="day-title">
+                                <i class="bi bi-calendar-event text-success me-1"></i> {{ day }}
+                            </h5>
+                            <span class="day-total-badge">
+                                ₹{{ "%.0f"|format(day_total.amount) }} • {{ day_total.count }}/3
+                            </span>
+                        </div>
+
+                        <!-- 3 Meal Slots -->
+                        <div class="day-card-body">
+
+                            {% for meal_category in ['Breakfast', 'Lunch', 'Dinner'] %}
+
+                                {% set current_selection = namespace(name='', price=0, id=None, food_type='', image_url='') %}
+                                {% for plan in plans %}
+                                    {% if plan['day'] == day and plan['category'] == meal_category %}
+                                        {% set current_selection.name = plan['name'] %}
+                                        {% set current_selection.price = plan['price'] %}
+                                        {% set current_selection.id = plan['meal_id'] %}
+                                        {% set current_selection.food_type = plan['food_type'] %}
+                                        {% set current_selection.image_url = plan['image_url'] %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                <div class="meal-slot-item">
+                                    <form action="{{ url_for('save_plan') }}" method="POST">
+                                        <input type="hidden" name="day" value="{{ day }}">
+                                        <input type="hidden" name="category" value="{{ meal_category }}">
+
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <div class="meal-slot-label mb-0">
+                                                {% if meal_category == 'Breakfast' %}🥞 Breakfast
+                                                {% elif meal_category == 'Lunch' %}🍱 Lunch
+                                                {% else %}🍛 Dinner{% endif %}
+                                            </div>
+
+                                            {% if current_selection.name %}
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <span class="badge bg-success-subtle text-success small">
+                                                        ₹{{ "%.0f"|format(current_selection.price) }}
+                                                    </span>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-outline-success border-0 py-0 px-1 btn-open-3d"
+                                                            data-id="{{ current_selection.id }}"
+                                                            data-name="{{ current_selection.name }}"
+                                                            data-price="{{ current_selection.price }}"
+                                                            data-category="{{ meal_category }}"
+                                                            data-foodtype="{{ current_selection.food_type }}"
+                                                            data-desc="Scheduled {{ meal_category }} on {{ day }}"
+                                                            data-img="{{ current_selection.image_url }}"
+                                                            title="Inspect in 3D 360°">
+                                                        <i class="bi bi-box-fill"></i> 3D
+                                                    </button>
+                                                </div>
+                                            {% else %}
+                                                <span class="badge bg-secondary-subtle text-muted small">Not set</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="d-flex gap-2 mt-2">
+                                            <select name="meal_id" class="form-select meal-select-custom flex-grow-1" required>
+                                                <option value="" disabled {% if not current_selection.id %}selected{% endif %}>
+                                                    Choose {{ meal_category }}...
+                                                </option>
+
+                                                {% for meal in meals %}
+                                                    {% if meal['category'] == meal_category %}
+                                                        <option value="{{ meal['id'] }}"
+                                                            {% if current_selection.id == meal['id'] %}selected{% endif %}>
+                                                            {{ meal['name'] }} (₹{{ "%.0f"|format(meal['price']) }})
+                                                        </option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+
+                                            <button type="submit" class="btn btn-outline-success btn-sm px-3 rounded-3" title="Save this meal">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Daily Expense Summary & Analytics Table -->
+        <div class="card shadow-sm border-0 rounded-4 mt-5 overflow-hidden">
+            <div class="card-header bg-white border-bottom p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold mb-1">
+                            <i class="bi bi-bar-chart-fill text-success me-2"></i>Daily Expense Breakdown
+                        </h4>
+                        <p class="text-muted small mb-0">Summary of meals planned and expenses per day of the week.</p>
+                    </div>
+                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill mt-2 mt-md-0">
+                        Total Planned: ₹{{ "%.2f"|format(weekly_budget) }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-start ps-4">Day</th>
+                                <th>Meals Scheduled</th>
+                                <th>Visual Proportion</th>
+                                <th class="text-end pe-4">Daily Cost</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for day in days %}
+
+                                {% set ns = namespace(count=0, total=0) %}
+                                {% for item in daily_summary %}
+                                    {% if item['day'] == day %}
+                                        {% set ns.count = item['meal_count'] %}
+                                        {% set ns.total = item['daily_total'] %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% set day_pct = (ns.total / weekly_budget * 100) if weekly_budget > 0 else 0 %}
+
+                                <tr>
+                                    <td class="text-start ps-4 fw-bold">
+                                        <i class="bi bi-dot text-success fs-4 align-middle"></i>{{ day }}
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
+                                            {{ ns.count }} / 3 meals
+                                        </span>
+                                    </td>
+
+                                    <td style="min-width: 180px;">
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-success" style="width: {{ day_pct }}%;"></div>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-end pe-4 fw-bold text-success">
+                                        ₹{{ "%.2f"|format(ns.total) }}
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="dailybite-footer">
+        <div class="container text-center">
+            <p class="text-muted small mb-0">
+                © 2026 DailyBite • Smart Meal Planning & Budget Management Made Simple.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+         3D 360° Food Studio Modal (WebGL Three.js Photorealistic 3D Vision)
+         ========================================================================== -->
+    <div class="modal fade studio-3d-modal" id="food3DStudioModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0">
+
+                <div class="studio-3d-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="badge-icon green fs-5">
+                            <i class="bi bi-box-fill"></i>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <h4 class="fw-bold mb-0 text-white" id="studioDishTitle">Dish Name</h4>
+                                <div id="studioDietBadge" class="diet-stamp veg">
+                                    <span class="diet-dot"></span>
+                                </div>
+                                <span class="badge bg-secondary" id="studioDishCategory">Category</span>
+                            </div>
+                            <span class="text-success fw-bold fs-5" id="studioDishPrice">₹0</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Top Studio Controls Bar -->
+                <div class="studio-top-controls">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-white-50 small fw-bold text-uppercase" style="font-size: 0.72rem;">Lighting:</span>
+                        <div class="studio-pill-group">
+                            <button type="button" class="studio-pill-btn lighting-mode-btn active" data-mode="daylight">
+                                ☀️ Studio Day
+                            </button>
+                            <button type="button" class="studio-pill-btn lighting-mode-btn" data-mode="bistro">
+                                🕯️ Warm Bistro
+                            </button>
+                            <button type="button" class="studio-pill-btn lighting-mode-btn" data-mode="cyber">
+                                🌙 Cyber Glow
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-white-50 small fw-bold text-uppercase" style="font-size: 0.72rem;">Steam:</span>
+                        <div class="studio-pill-group">
+                            <button type="button" class="studio-pill-btn heat-mode-btn active" data-heat="hot">
+                                🔥 Sizzling
+                            </button>
+                            <button type="button" class="studio-pill-btn heat-mode-btn" data-heat="warm">
+                                ♨️ Warm
+                            </button>
+                            <button type="button" class="studio-pill-btn heat-mode-btn" data-heat="cold">
+                                ❄️ Off
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-white-50 small fw-bold text-uppercase" style="font-size: 0.72rem;">Portion:</span>
+                        <div class="portion-size-selector">
+                            <button type="button" class="portion-btn active" data-scale="1.0">1x Regular</button>
+                            <button type="button" class="portion-btn" data-scale="1.25">1.25x Large</button>
+                            <button type="button" class="portion-btn" data-scale="1.5">1.5x Feast</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="studio-canvas-stage" id="studioCanvasStage">
+                    <div class="studio-hud-telemetry" id="studioTelemetryHud">
+                        360° Studio | Yaw: 0° | Pitch: 25° | Zoom: 1.0x
+                    </div>
+
+                    <div class="studio-explode-panel">
+                        <label>
+                            <span><i class="bi bi-layers-half text-warning me-1"></i>Explode Layers</span>
+                            <span id="studioExplodeDisplay" class="text-success fw-bold">0%</span>
+                        </label>
+                        <input type="range" id="studioExplodeSlider" min="0" max="100" value="0">
+                        <div class="d-flex justify-content-between text-white-50 mt-1" style="font-size: 0.68rem;">
+                            <span id="layerNameBase">Base</span> • <span id="layerNameMid">Topping</span> • <span id="layerNameTop">Garnish</span>
+                        </div>
+                    </div>
+
+                    <div id="studioHotspotsContainer"></div>
+
+                    <div class="studio-toolbar-floating">
+                        <button type="button" class="studio-tool-btn active" id="studioBtnAutoRotate">
+                            <i class="bi bi-arrow-repeat"></i> Auto-Spin 360°
+                        </button>
+                        <button type="button" class="studio-tool-btn" id="studioBtnResetAngle">
+                            <i class="bi bi-compass"></i> Reset Angle
+                        </button>
+                        <button type="button" class="studio-tool-btn" id="studioBtnZoomIn">
+                            <i class="bi bi-zoom-in"></i> Zoom +
+                        </button>
+                        <button type="button" class="studio-tool-btn" id="studioBtnZoomOut">
+                            <i class="bi bi-zoom-out"></i> Zoom -
+                        </button>
+                        <button type="button" class="studio-tool-btn active" id="studioBtnToggleHotspots">
+                            <i class="bi bi-geo-alt-fill"></i> Hotspots
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-dark bg-opacity-75 border-top border-secondary border-opacity-25">
+                    <div class="row align-items-center g-3">
+                        <div class="col-lg-8">
+                            <p class="text-white-50 small mb-2" id="studioDishDesc">
+                                Gourmet meal preparation with fresh farm ingredients.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroCalories">
+                                    <i class="bi bi-fire text-danger me-1"></i> ~380 kcal
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroProtein">
+                                    <i class="bi bi-egg text-warning me-1"></i> 16g Protein
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroCarbs">
+                                    <i class="bi bi-pie-chart text-info me-1"></i> 52g Carbs
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill" id="studioMacroFat">
+                                    <i class="bi bi-droplet-half text-primary me-1"></i> 14g Fat
+                                </span>
+                                <span class="badge bg-secondary-subtle text-dark border px-3 py-2 rounded-pill">
+                                    <i class="bi bi-hand-index-thumb text-success me-1"></i> Drag to Rotate 360°
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 text-lg-end">
+                            <button type="button" class="btn btn-primary-gradient px-4 py-2" data-bs-dismiss="modal">
+                                <i class="bi bi-check2-circle me-1"></i> Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js & OrbitControls for 360-degree 3D Vision -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Bootstrap & Custom Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Mobile Day Filter Tabs Script -->
+    <script>
+        document.querySelectorAll('.day-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.day-filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const selectedDay = this.getAttribute('data-day');
+                const cols = document.querySelectorAll('.planner-day-col');
+
+                cols.forEach(col => {
+                    if (selectedDay === 'all' || col.getAttribute('data-day-name') === selectedDay) {
+                        col.style.display = 'block';
+                    } else {
+                        col.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

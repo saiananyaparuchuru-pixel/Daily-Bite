@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Meal Preferences | DailyBite</title>
+
+    <!-- Google Fonts & Bootstrap Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Modern Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- Modern Glassmorphism Navigation Bar -->
+    <nav class="navbar navbar-expand-lg dailybite-navbar">
+        <div class="container">
+
+            <a class="brand-wrapper" href="/">
+                <div class="brand-icon-box">
+                    <i class="bi bi-egg-fried"></i>
+                </div>
+                <h1 class="brand-text">Daily<span>Bite</span></h1>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                <i class="bi bi-list fs-2 text-dark"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav ms-auto align-items-center gap-1 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link" href="/planner">
+                            <i class="bi bi-calendar-week"></i> Weekly Planner
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link nav-pill-link active" href="/preferences">
+                            <i class="bi bi-sliders"></i> My Preferences
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <a href="/planner" class="btn btn-primary-gradient py-2 px-3 shadow-sm text-white">
+                            <i class="bi bi-calendar2-check"></i> Open Planner
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- Main Container -->
+    <div class="container mt-4 mb-5" style="max-width: 860px;">
+
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <span class="hero-tag">
+                <i class="bi bi-person-gear"></i> Personalization
+            </span>
+            <h2 class="fw-bold mb-2">My Meal Preferences 🍽️</h2>
+            <p class="text-muted">
+                Customize your diet, maximum price limit, and default meal categories. DailyBite will tailor all recommendations just for you.
+            </p>
+        </div>
+
+        <!-- Flashed Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert custom-alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi {% if category == 'success' %}bi-check-circle-fill text-success{% else %}bi-exclamation-triangle-fill text-danger{% endif %} fs-5"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+
+        <!-- Preferences Form Card -->
+        <div class="card shadow-md border-0 rounded-4 p-4 p-md-5 bg-white">
+
+            <form action="{{ url_for('save_preferences') }}" method="POST" id="preferencesForm">
+
+                <!-- 1. Dietary Preference Visual Cards -->
+                <div class="mb-5">
+                    <label class="form-label fw-bold fs-5 mb-1 d-block">
+                        1. What type of food do you prefer?
+                    </label>
+                    <p class="text-muted small mb-3">Choose the dietary style that matches your lifestyle.</p>
+
+                    <!-- Hidden input to store chosen preference -->
+                    <input type="hidden" name="food_type" id="selectedFoodType" value="{{ preferences['food_type'] }}">
+
+                    <div class="row g-3">
+                        <!-- Both -->
+                        <div class="col-md-4">
+                            <div class="pref-selection-card {% if preferences['food_type'] == 'Both' %}selected{% endif %}"
+                                 data-value="Both"
+                                 onclick="selectFoodType('Both')">
+                                <div class="pref-icon-circle text-warning">
+                                    <i class="bi bi-egg-fried"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">Both</h5>
+                                <p class="text-muted small mb-0">Vegetarian &amp; Non-Vegetarian</p>
+                            </div>
+                        </div>
+
+                        <!-- Vegetarian -->
+                        <div class="col-md-4">
+                            <div class="pref-selection-card {% if preferences['food_type'] == 'Vegetarian' %}selected{% endif %}"
+                                 data-value="Vegetarian"
+                                 onclick="selectFoodType('Vegetarian')">
+                                <div class="pref-icon-circle text-success">
+                                    <i class="bi bi-flower1"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">Vegetarian</h5>
+                                <p class="text-muted small mb-0">100% Pure Veg Dishes</p>
+                            </div>
+                        </div>
+
+                        <!-- Non-Vegetarian -->
+                        <div class="col-md-4">
+                            <div class="pref-selection-card {% if preferences['food_type'] == 'Non-Vegetarian' %}selected{% endif %}"
+                                 data-value="Non-Vegetarian"
+                                 onclick="selectFoodType('Non-Vegetarian')">
+                                <div class="pref-icon-circle text-danger">
+                                    <i class="bi bi-fire"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">Non-Veg</h5>
+                                <p class="text-muted small mb-0">Chicken, Fish, Eggs &amp; Meat</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 2. Maximum Budget Per Meal -->
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold fs-5 mb-0">
+                            2. Maximum spending per meal
+                        </label>
+                        <span class="badge bg-success-subtle text-success fs-5 fw-bold px-3 py-1 rounded-pill" id="prefBudgetDisplay">
+                            ₹{{ '%.0f'|format(preferences['max_price']) }}
+                        </span>
+                    </div>
+                    <p class="text-muted small mb-3">DailyBite will recommend meals up to this price threshold.</p>
+
+                    <div class="input-group mb-3" style="max-width: 280px;">
+                        <span class="input-group-text bg-light fw-bold">₹</span>
+                        <input type="number"
+                               name="max_price"
+                               id="prefBudgetNumber"
+                               class="form-control"
+                               min="10"
+                               max="500"
+                               step="5"
+                               value="{{ '%.0f'|format(preferences['max_price']) }}"
+                               required>
+                    </div>
+
+                    <!-- Range Slider -->
+                    <input type="range"
+                           id="prefBudgetSlider"
+                           class="range-input mb-2"
+                           min="30"
+                           max="300"
+                           step="5"
+                           value="{{ '%.0f'|format(preferences['max_price']) }}">
+
+                    <!-- Quick Preset Chips -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(40)">₹40</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(60)">₹60</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(100)">₹100</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(150)">₹150</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPrefBudget(200)">₹200</button>
+                    </div>
+                </div>
+
+
+                <!-- 3. Preferred Meal Categories -->
+                <div class="mb-5">
+                    <label class="form-label fw-bold fs-5 mb-1 d-block">
+                        3. Which meals do you want to plan?
+                    </label>
+                    <p class="text-muted small mb-3">Select the meal categories you want to include in suggestions.</p>
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="card h-100 p-3 border rounded-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" for="breakfast">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-3">🥞</span>
+                                    <div>
+                                        <div class="fw-bold">Breakfast</div>
+                                        <div class="text-muted small">Morning starter</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch fs-4 mb-0">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="breakfast"
+                                           value="1"
+                                           id="breakfast"
+                                           {% if preferences['breakfast'] %}checked{% endif %}>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="card h-100 p-3 border rounded-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" for="lunch">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-3">🍱</span>
+                                    <div>
+                                        <div class="fw-bold">Lunch</div>
+                                        <div class="text-muted small">Midday meal</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch fs-4 mb-0">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="lunch"
+                                           value="1"
+                                           id="lunch"
+                                           {% if preferences['lunch'] %}checked{% endif %}>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="card h-100 p-3 border rounded-3 d-flex flex-row align-items-center justify-content-between cursor-pointer" for="dinner">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fs-3">🍛</span>
+                                    <div>
+                                        <div class="fw-bold">Dinner</div>
+                                        <div class="text-muted small">Evening dinner</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch fs-4 mb-0">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="dinner"
+                                           value="1"
+                                           id="dinner"
+                                           {% if preferences['dinner'] %}checked{% endif %}>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Submit Button -->
+                <div class="pt-3 border-top">
+                    <button type="submit" class="btn btn-primary-gradient w-100 py-3 fs-6 justify-content-center shadow-md">
+                        <i class="bi bi-check2-circle fs-5 me-1"></i> Save My Preferences
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="dailybite-footer">
+        <div class="container text-center">
+            <p class="text-muted small mb-0">
+                © 2026 DailyBite • Smart Meal Planning & Budget Management Made Simple.
+            </p>
+        </div>
+    </footer>
+
+
+    <!-- Bootstrap & Custom Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Preferences Interactive JS -->
+    <script>
+        function selectFoodType(val) {
+            document.getElementById('selectedFoodType').value = val;
+            document.querySelectorAll('.pref-selection-card').forEach(card => {
+                if (card.getAttribute('data-value') === val) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+
+        const slider = document.getElementById('prefBudgetSlider');
+        const numInput = document.getElementById('prefBudgetNumber');
+        const display = document.getElementById('prefBudgetDisplay');
+
+        function updateBudget(val) {
+            slider.value = val;
+            numInput.value = val;
+            display.textContent = '₹' + val;
+        }
+
+        slider.addEventListener('input', function() {
+            updateBudget(this.value);
+        });
+
+        numInput.addEventListener('input', function() {
+            updateBudget(this.value);
+        });
+
+        function setPrefBudget(val) {
+            updateBudget(val);
+        }
+    </script>
+
+</body>
+</html>

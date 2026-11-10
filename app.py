@@ -29,6 +29,9 @@ from database import (
     get_daily_summary,
     save_user_preferences,
     get_user_preferences,
+    create_order,
+    get_all_orders,
+    get_order_by_id,
 )
 
 # Load environment variables from .env
@@ -367,49 +370,199 @@ def extract_budget(command):
 # 8. Gnani Prisma Voice Command + Timbre Voice Reply
 # --------------------------------------------------
 
-@app.route("/voice-command", methods=["POST"])
-def voice_command():
-    audio_file = request.files.get("audio")
+def process_voice_transcript(transcript):
+    """
+    Core NLP and recommendation engine for voice commands:
+    Parses spoken query, extracts dietary preferences and budget,
+    retrieves matching meals, and synthesizes a spoken voice reply with Gnani Timbre.
+    """
+    command = transcript.lower().strip()
 
+    # Identify food preference
+    food_type = None
+    if (
+        'non vegetarian' in command
+        or 'non-vegetarian' in command
+        or 'non veg' in command
+        or 'non-veg' in command
+        or 'chicken' in command
+        or 'egg' in command
+        or 'mutton' in command
+        or 'fish' in command
+    ):
+        food_type = 'Non-Vegetarian'
+    elif (
+        'vegetarian' in command
+        or 'veg ' in command
+        or 'pure veg' in command
+        or command.startswith('veg')
+        or 'paneer' in command
+        or 'dosa' in command
+        or 'idli' in command
+        or 'poha' in command
+    ):
+        food_type = 'Vegetarian'
+
+    # Identify meal category
+    category = None
+    if 'breakfast' in command or 'tiffin' in command:
+        category = 'Breakfast'
+    elif 'lunch' in command or 'thali' in command or 'biryani' in command:
+        category = 'Lunch'
+    elif 'dinner' in command or 'night' in command:
+        category = 'Dinner'
+
+    # Check for direct dish name match
+    all_known_meals = get_all_meals()
+    specific_dish = None
+    for m in all_known_meals:
+        if m['name'].lower() in command:
+            specific_dish = m['name']
+            break
+
+    # Identify maximum price
+    max_price = extract_budget(command)
+
+    # Apply saved preferences where details are missing
+    preferences = get_user_preferences()
+
+    if food_type is None and not specific_dish:
+        food_type = preferences['food_type']
+
+    if max_price is None and not specific_dish:
+        max_price = float(preferences['max_price'])
+
+    allowed_categories = None
+    if category is None and not specific_dish:
+        allowed_categories = []
+        if preferences['breakfast']:
+            allowed_categories.append('Breakfast')
+        if preferences['lunch']:
+            allowed_categories.append('Lunch')
+        if preferences['dinner']:
+            allowed_categories.append('Dinner')
+
+    # If specific dish requested, return that dish first
+    if specific_dish:
+        meal_list = [dict(m) for m in all_known_meals if specific_dish.lower() in m['name'].lower()]
+    else:
+        meals = get_filtered_meals(
+            food_type=food_type or None,
+            max_price=max_price,
+            category=category,
+            allowed_categories=allowed_categories,
+        )
+        meal_list = [dict(meal) for meal in meals]
+
+    # Create personalized voice response
+    if meal_list:
+        meal_details = []
+        for meal in meal_list[:3]:
+            meal_details.append(f"{meal['name']} for {meal['price']:g} rupees")
+        meal_names = ', and '.join(meal_details)
+
+        plural = 's' if len(meal_list) != 1 else ''
+        message = (
+            f"Great! I found {len(meal_list)} delicious option{plural}. "
+            f"Here is {meal_names}. Enjoy your meal!"
+        )
+    else:
+        message = (
+            "I could not find meals matching that exact request. "
+            "Showing all our popular recommendations instead!"
+        )
+        meal_list = [dict(m) for m in get_all_meals()[:4]]
+
+    # Generate spoken voice reply using Gnani Timbre
+    audio_hex = None
+    try:
+        audio = tts_client.synthesize(
+            message,
+            voice='Kaveri',
+            model='timbre-v2.5',
+            language='en-IN',
+            audio_config=AudioConfig(
+                container='mp3',
+                sample_rate=48000,
+                bitrate='128k',
+            ),
+        )
+        audio_hex = audio.hex()
+    except Exception:
+        app.logger.exception('Gnani Timbre audio generation failed')
+
+    return jsonify({
+        'success': True,
+        'transcript': transcript,
+        'filters': {
+            'food_type': food_type,
+            'category': category,
+            'max_price': max_price,
+        },
+        'meals': meal_list,
+        'message': message,
+        'audio': audio_hex,
+    })
+
+
+@app.route('/voice-query', methods=['POST'])
+def voice_query():
+    """Text-based voice query endpoint (direct speech transcript or quick chips)."""
+    data = request.get_json() if request.is_json else request.form.to_dict()
+    transcript = (data.get('transcript') or '').strip()
+    if not transcript:
+        return jsonify({'success': False, 'message': 'Please say or enter a meal query.'}), 400
+    return process_voice_transcript(transcript)
+
+
+@app.route('/voice-command', methods=['POST'])
+def voice_command():
+    """Audio recording upload endpoint (with JSON transcript fallback)."""
+    # 1. Handle JSON transcript if submitted
+    if request.is_json:
+        data = request.get_json() or {}
+        transcript = data.get('transcript', '').strip()
+        if transcript:
+            return process_voice_transcript(transcript)
+
+    # 2. Handle audio file
+    audio_file = request.files.get('audio')
     if not audio_file or not audio_file.filename:
+        text_query = request.form.get('transcript', '').strip()
+        if text_query:
+            return process_voice_transcript(text_query)
         return jsonify({
-            "success": False,
-            "message": "No audio recording received.",
+            'success': False,
+            'message': 'No audio recording or speech text received.',
         }), 400
 
     try:
         from gnani.stt import GnaniSTTClient
 
         audio_bytes = audio_file.read()
-
         if not audio_bytes:
             return jsonify({
-                "success": False,
-                "message": "The audio recording is empty.",
+                'success': False,
+                'message': 'The audio recording is empty.',
             }), 400
 
         if len(audio_bytes) > 10 * 1024 * 1024:
             return jsonify({
-                "success": False,
-                "message": (
-                    "Recording is too large. "
-                    "Please record a shorter command."
-                ),
+                'success': False,
+                'message': 'Recording is too large. Please record a shorter command.',
             }), 413
 
-        # Convert browser WebM audio into WAV.
-
+        # Convert browser WebM audio into WAV
         ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
-
         conversion = subprocess.run(
             [
                 ffmpeg_path,
-                "-i", "pipe:0",
-                "-vn",
-                "-ac", "1",
-                "-ar", "16000",
-                "-f", "wav",
-                "pipe:1",
+                '-i', 'pipe:0',
+                '-vn',
+                '-ac', '1',
+                '-ar', '16000',
+                '-f', 'wav',
+                'pipe:1',
             ],
             input=audio_bytes,
             stdout=subprocess.PIPE,
@@ -419,204 +572,126 @@ def voice_command():
 
         if conversion.returncode != 0:
             raise RuntimeError(
-                "Audio conversion failed: "
-                + conversion.stderr.decode(
-                    "utf-8",
-                    errors="replace",
-                )[-1000:]
+                'Audio conversion failed: '
+                + conversion.stderr.decode('utf-8', errors='replace')[-1000:]
             )
 
         wav_audio = conversion.stdout
-
         if not wav_audio:
-            raise RuntimeError(
-                "Audio conversion produced an empty WAV file."
-            )
+            raise RuntimeError('Audio conversion produced an empty WAV file.')
 
-        # Send WAV audio to Gnani Prisma.
-
+        # Send WAV audio to Gnani Prisma STT
         stt_client = GnaniSTTClient()
-
         result = stt_client.transcribe_bytes(
             wav_audio,
-            filename="voice-command.wav",
-            language_code="en-IN",
-            model="prisma-v3.0",
+            filename='voice-command.wav',
+            language_code='en-IN',
+            model='prisma-v3.0',
         )
 
-        app.logger.info(
-            "GNANI STT RESPONSE: %s",
-            result,
-        )
-
-        transcript = result.get("transcript", "").strip()
+        app.logger.info('GNANI STT RESPONSE: %s', result)
+        transcript = result.get('transcript', '').strip()
 
         if not transcript:
             return jsonify({
-                "success": False,
-                "message": (
-                    "I could not understand the recording. "
-                    "Please try again."
-                ),
+                'success': False,
+                'message': 'I could not understand the recording. Please try speaking again.',
             }), 400
 
-        command = transcript.lower()
-
-        # Identify food preference.
-
-        food_type = None
-
-        if (
-            "non vegetarian" in command
-            or "non-vegetarian" in command
-            or "non veg" in command
-        ):
-            food_type = "Non-Vegetarian"
-
-        elif (
-            "vegetarian" in command
-            or "veg " in command
-            or command.startswith("veg")
-        ):
-            food_type = "Vegetarian"
-
-        # Identify meal category.
-
-        category = None
-
-        if "breakfast" in command:
-            category = "Breakfast"
-
-        elif "lunch" in command:
-            category = "Lunch"
-
-        elif "dinner" in command:
-            category = "Dinner"
-
-        # Identify maximum price.
-
-        max_price = extract_budget(command)
-
-        # Apply saved preferences where details are missing.
-
-        preferences = get_user_preferences()
-
-        if food_type is None:
-            food_type = preferences["food_type"]
-
-        if max_price is None:
-            max_price = float(preferences["max_price"])
-
-        allowed_categories = None
-
-        if category is None:
-            allowed_categories = []
-
-            if preferences["breakfast"]:
-                allowed_categories.append("Breakfast")
-
-            if preferences["lunch"]:
-                allowed_categories.append("Lunch")
-
-            if preferences["dinner"]:
-                allowed_categories.append("Dinner")
-
-        # Retrieve matching meals from SQLite.
-
-        meals = get_filtered_meals(
-            food_type=food_type or None,
-            max_price=max_price,
-            category=category,
-            allowed_categories=allowed_categories,
-        )
-
-        meal_list = [
-            dict(meal)
-            for meal in meals
-        ]
-
-        # Create personalized voice response.
-
-        if meal_list:
-            meal_details = []
-
-            for meal in meal_list:
-                meal_details.append(
-                    f"{meal['name']} costs {meal['price']:g} rupees"
-                )
-
-            meal_names = ", and ".join(meal_details)
-
-            message = (
-                f"Great! I found {len(meal_list)} "
-                f"meals matching your request. "
-                f"Here are your options: {meal_names}. "
-                "Enjoy your meal!"
-            )
-
-        else:
-            message = (
-                "Sorry! I could not find meals matching "
-                "your request. Try changing your food "
-                "preference or budget."
-            )
-
-        # Generate spoken response using Gnani Timbre.
-
-        audio_hex = None
-
-        try:
-            audio = tts_client.synthesize(
-                message,
-                voice="Kaveri",
-                model="timbre-v2.5",
-                language="en-IN",
-                audio_config=AudioConfig(
-                    container="mp3",
-                    sample_rate=48000,
-                    bitrate="128k",
-                ),
-            )
-
-            audio_hex = audio.hex()
-
-        except Exception:
-            app.logger.exception(
-                "Gnani Timbre audio generation failed"
-            )
-
-        # Send results and optional audio to browser.
-
-        return jsonify({
-            "success": True,
-            "transcript": transcript,
-            "filters": {
-                "food_type": food_type,
-                "category": category,
-                "max_price": max_price,
-            },
-            "meals": meal_list,
-            "message": message,
-            "audio": audio_hex,
-        })
+        return process_voice_transcript(transcript)
 
     except Exception:
-        app.logger.exception(
-            "Gnani voice command failed"
-        )
-
+        app.logger.exception('Gnani voice command failed')
         return jsonify({
-            "success": False,
-            "message": (
-                "Voice processing failed. "
-                "Please try again."
-            ),
+            'success': False,
+            'message': 'Voice processing encountered an issue. Please try again.',
         }), 500
 
 
 # --------------------------------------------------
 # 9. Start Flask Application
 # --------------------------------------------------
+
+
+# --------------------------------------------------
+# 10. Place Food Order (Instant, Tomorrow, or Multi-Day Plan)
+# --------------------------------------------------
+
+@app.route("/place-order", methods=["POST"])
+def place_order():
+    try:
+        import json, random
+        data = request.get_json() if request.is_json else request.form.to_dict()
+        items = data.get("items", [])
+        if isinstance(items, str):
+            items = json.loads(items)
+
+        if not items:
+            return jsonify({"success": False, "message": "Your cart is empty."}), 400
+
+        order_number = f"DB-{random.randint(10000, 99999)}"
+        subtotal = sum(float(item.get("price", 0)) * int(item.get("quantity", 1)) for item in items)
+        order_type = data.get("order_type", "instant")
+        plan_duration = int(data.get("plan_duration", 1))
+
+        # Delivery fee: Free for multi-day plans or orders >= Rs 200, else Rs 25
+        delivery_fee = 0.0 if (plan_duration > 1 or subtotal >= 200) else 25.0
+        taxes = round(subtotal * 0.05, 2)
+        total_amount = round(subtotal + delivery_fee + taxes, 2)
+
+        if order_type == "instant":
+            delivery_schedule = "Instant Delivery (in 25-35 mins)"
+        elif order_type == "tomorrow":
+            slot = data.get("slot", "Lunch 1:00 PM")
+            delivery_schedule = f"Tomorrow ({slot})"
+        else:
+            days_str = data.get("days_selected", f"{plan_duration} Days Plan")
+            delivery_schedule = f"{plan_duration}-Day Plan ({days_str})"
+
+        order_data = {
+            "order_number": order_number,
+            "order_type": order_type,
+            "plan_duration": plan_duration,
+            "delivery_schedule": delivery_schedule,
+            "customer_name": data.get("customer_name", "Valued Customer"),
+            "customer_phone": data.get("customer_phone", "9876543210"),
+            "delivery_address": data.get("delivery_address", "Flat 402, Green Valley Apartments, Hyderabad"),
+            "payment_method": data.get("payment_method", "UPI"),
+            "subtotal": subtotal,
+            "delivery_fee": delivery_fee,
+            "taxes": taxes,
+            "total_amount": total_amount
+        }
+
+        order_id = create_order(order_data, items)
+
+        return jsonify({
+            "success": True,
+            "order_id": order_id,
+            "order_number": order_number,
+            "order_type": order_type,
+            "delivery_schedule": delivery_schedule,
+            "total_amount": total_amount,
+            "message": "Order confirmed! Chef is preparing your delicious meal."
+        })
+    except Exception as e:
+        app.logger.exception("Place order error")
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route("/orders")
+def orders_page():
+    orders = get_all_orders()
+    return render_template("orders.html", orders=orders)
+
+
+@app.route("/api/order/<int:order_id>")
+def api_order(order_id):
+    order = get_order_by_id(order_id)
+    if not order:
+        return jsonify({"success": False, "message": "Order not found"}), 404
+    return jsonify({"success": True, "order": order})
+
 
 if __name__ == "__main__":
     create_tables()
